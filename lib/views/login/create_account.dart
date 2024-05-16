@@ -45,7 +45,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Form(
             key: _formKey,
             child: Container(

@@ -32,11 +32,15 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: Colors.black,
       body: Container(
         decoration: BoxDecoration(
-            // image: DecorationImage(
-            //   fit: BoxFit.cover,
-            //   image: AssetImage('assets/images/splash_pic.jpg'),
-            // ),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: AssetImage('assets/images/bg.jpg'),
+            colorFilter: ColorFilter.mode(
+              Colors.white.withOpacity(0.2),
+              BlendMode.dstATop,
             ),
+          ),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -56,9 +60,6 @@ class _SplashScreenState extends State<SplashScreen> {
                   )
                 ],
               ),
-            ),
-            SizedBox(
-              height: 10,
             ),
             DefaultTextStyle(
               style: const TextStyle(

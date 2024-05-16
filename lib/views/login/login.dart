@@ -39,7 +39,7 @@ class _LogInScreenState extends State<LogInScreen> {
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Form(
               key: _formKey,
               child: Container(
@@ -68,7 +68,7 @@ class _LogInScreenState extends State<LogInScreen> {
                     ),
                     Text(
                       "Sign to continue",
-                      style: TextStyle(color: secondaryColor, fontSize: 15),
+                      style: TextStyle(color: primaryColor, fontSize: 15),
                     ),
                     SizedBox(
                       height: 60,
