@@ -29,7 +29,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   Future<void> verify() async {
     final isValid = _formKey.currentState?.validate();
     if (isValid == true) {
-      var response = await http.post(Uri.parse("$baseApi" + "register"),
+      var response = await http.post(Uri.parse("$baseApi" + "auth/register"),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'email': emailController.text,
@@ -37,7 +37,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
             'name': userNameController.text,
             'phone': phoneController.text,
           }));
-
+      var decodedResponse = jsonDecode(response.body);
       if (response.statusCode == 201) {
         setState(() {
           isCreated = true;
@@ -49,8 +49,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               context, MaterialPageRoute(builder: (context) => LogInScreen()));
         });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(backgroundColor: Colors.red, content: Text("Error")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.red,
+            content: Text(decodedResponse['message'])));
       }
     }
   }

@@ -1,6 +1,7 @@
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/views/home/home_page.dart';
 import 'package:e_commerce/views/login/login.dart';
+import 'package:e_commerce/views/login/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(fontFamily: "poppins"),
         debugShowCheckedModeBanner: false,
-        home: LogInScreen(),
+        home: SplashScreen(),
       ),
     );
   }

@@ -1,10 +1,14 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
+import 'package:e_commerce/views/home/home_page.dart';
 import 'package:e_commerce/views/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,11 +24,20 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
   }
 
-  _next() {
-    Future.delayed(Duration(milliseconds: 2200), () {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LogInScreen()));
-    });
+  _next() async {
+    var prefs = await SharedPreferences.getInstance();
+    String tokenId = prefs.getString("tokens")!;
+    if (tokenId.isNotEmpty) {
+      Future.delayed(Duration(milliseconds: 2200), () {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
+      });
+    } else {
+      Future.delayed(Duration(milliseconds: 2200), () {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => LogInScreen()));
+      });
+    }
   }
 
   @override

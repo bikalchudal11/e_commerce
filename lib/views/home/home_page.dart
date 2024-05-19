@@ -1,13 +1,31 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
+import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/resources/components/meme_container.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/views/home/add_meme.dart';
 import 'package:e_commerce/views/home/drawer_content.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    showUserDetails();
+    super.initState();
+  }
+
+  Future<void> showUserDetails() async {
+    var prov = Provider.of<AuthProvider>(context, listen: false);
+    // print(prov.authId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +36,7 @@ class HomePage extends StatelessWidget {
         title: Text(
           "Memes App",
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -28,14 +46,14 @@ class HomePage extends StatelessWidget {
             onPressed: () {},
             icon: Icon(
               Icons.person,
-              size: 30,
+              size: 25,
             ),
           ),
           IconButton(
             onPressed: () {},
             icon: Icon(
               Icons.keyboard_arrow_down,
-              size: 30,
+              size: 25,
             ),
           )
         ],

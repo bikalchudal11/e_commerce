@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/resources/custom_button.dart';
 import 'package:e_commerce/views/home/home_page.dart';
@@ -10,6 +11,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -22,19 +25,25 @@ class _LogInScreenState extends State<LogInScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passController = TextEditingController();
   bool _obsecureText = true;
-  bool isRemember = false;
+  bool isRemember = true;
   final _formKey = GlobalKey<FormState>();
   bool isLogin = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Future<void> login() async {
     final isValid = _formKey.currentState?.validate();
     if (isValid == true) {
-      var response = await http.post(Uri.parse("$baseApi" + "login"),
+      var response = await http.post(Uri.parse("$baseApi" + "auth/login"),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'email': emailController.text,
             'password': passController.text,
           }));
+
       var decodedResponse = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
@@ -45,9 +54,14 @@ class _LogInScreenState extends State<LogInScreen> {
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => HomePage()));
         });
+        var prefs = await SharedPreferences.getInstance();
+        await prefs.setString(
+            "tokens", decodedResponse['tokens']['access']['token']);
+        // print(prefs.getString("tokens"));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Colors.red, content: Text("Invalid credential!")));
+            backgroundColor: Colors.red,
+            content: Text(decodedResponse['message'])));
       }
     }
   }
