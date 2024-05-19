@@ -1,10 +1,13 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, use_build_context_synchronously
+
+import 'dart:convert';
 
 import 'package:e_commerce/views/login/login.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/resources/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
@@ -23,20 +26,32 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   final _formKey = GlobalKey<FormState>();
   bool isCreated = false;
 
-  verify() {
+  Future<void> verify() async {
     final isValid = _formKey.currentState?.validate();
     if (isValid == true) {
-      setState(() {
-        isCreated = true;
-      });
-      Future.delayed(Duration(seconds: 2), () {
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => VerifyPhone(
-        //               number: phoneController.text.trim(),
-        //             )));
-      });
+      var response = await http.post(Uri.parse("$baseApi" + "register"),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'email': emailController.text,
+            'password': passwordController.text,
+            'name': userNameController.text,
+            'phone': phoneController.text,
+          }));
+
+      if (response.statusCode == 201) {
+        setState(() {
+          isCreated = true;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.green, content: Text("Account Created")));
+        Future.delayed(Duration(seconds: 2), () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => LogInScreen()));
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(backgroundColor: Colors.red, content: Text("Error")));
+      }
     }
   }
 
@@ -44,23 +59,23 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Form(
-            key: _formKey,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage('assets/images/bg.jpg'),
-                  colorFilter: ColorFilter.mode(
-                    Colors.white.withOpacity(0.07),
-                    BlendMode.dstATop,
-                  ),
+        child: Form(
+          key: _formKey,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage('assets/images/bg.jpg'),
+                colorFilter: ColorFilter.mode(
+                  Colors.white.withOpacity(0.05),
+                  BlendMode.dstATop,
                 ),
               ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(25.0),
               child: Column(
                 children: [
                   SizedBox(
@@ -89,80 +104,32 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   SizedBox(
                     height: 30,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 25.0,
-                    ),
-                    child: TextFormField(
-                      cursorColor: primaryColor,
-                      controller: userNameController,
-                      validator: (value) {
-                        if (value == "" || value!.length < 8) {
-                          return "Username must be greater or equal to 8 characters!";
-                        } else {
-                          return null;
-                        }
-                      },
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.person,
-                          color: primaryColor,
-                        ),
-                        labelText: "Username",
-                        labelStyle: TextStyle(color: primaryColor),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: primaryColor,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: primaryColor, // Border color when focused
-                            width: 2.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 25.0,
-                    ),
-                    child: TextFormField(
-                      cursorColor: primaryColor,
-                      controller: emailController,
-                      validator: (value) {
-                        if (value == "") {
-                          return 'Please enter your email';
-                        }
-                        // Regular expression for email validation
-                        final emailRegex =
-                            RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                        if (!emailRegex.hasMatch(value!)) {
-                          return 'Please enter a valid email';
-                        }
+                  TextFormField(
+                    cursorColor: primaryColor,
+                    controller: userNameController,
+                    validator: (value) {
+                      if (value == "" || value!.length < 8) {
+                        return "Username must be greater or equal to 8 characters!";
+                      } else {
                         return null;
-                      },
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.email,
+                      }
+                    },
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.person,
+                        color: primaryColor,
+                      ),
+                      labelText: "Username",
+                      labelStyle: TextStyle(color: primaryColor),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
                           color: primaryColor,
                         ),
-                        labelText: "Email",
-                        labelStyle: TextStyle(color: primaryColor),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: primaryColor,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: primaryColor,
-                            width: 2.0,
-                          ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor, // Border color when focused
+                          width: 2.0,
                         ),
                       ),
                     ),
@@ -170,42 +137,121 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   SizedBox(
                     height: 15,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 25.0,
+                  TextFormField(
+                    cursorColor: primaryColor,
+                    controller: emailController,
+                    validator: (value) {
+                      if (value == "") {
+                        return 'Please enter your email';
+                      }
+                      // Regular expression for email validation
+                      final emailRegex =
+                          RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                      if (!emailRegex.hasMatch(value!)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: primaryColor,
+                      ),
+                      labelText: "Email",
+                      labelStyle: TextStyle(color: primaryColor),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor,
+                          width: 2.0,
+                        ),
+                      ),
                     ),
-                    child: TextFormField(
-                      cursorColor: primaryColor,
-                      keyboardType: TextInputType.number,
-                      controller: phoneController,
-                      validator: (value) {
-                        if (value == "") {
-                          return 'Please enter your phone number';
-                        }
-                        // Regular expression for phone number validation
-                        final phoneRegex = RegExp(r'^\d{10}$');
-                        if (!phoneRegex.hasMatch(value!)) {
-                          return 'Please enter a valid 10-digit phone number';
-                        }
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    cursorColor: primaryColor,
+                    keyboardType: TextInputType.number,
+                    controller: phoneController,
+                    validator: (value) {
+                      if (value == "") {
+                        return 'Please enter your phone number';
+                      }
+                      // Regular expression for phone number validation
+                      final phoneRegex = RegExp(r'^\d{10}$');
+                      if (!phoneRegex.hasMatch(value!)) {
+                        return 'Please enter a valid 10-digit phone number';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.phone_android_rounded,
+                        color: primaryColor,
+                      ),
+                      labelText: "Phone",
+                      labelStyle: TextStyle(color: primaryColor),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor, // Border color when focused
+                          width: 2.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    cursorColor: primaryColor,
+                    controller: passwordController,
+                    obscureText: _obsecureText,
+                    validator: (value) {
+                      if (value == "" || value!.length < 8) {
+                        return "Password must be greater or equal to 8 characters!";
+                      } else {
                         return null;
-                      },
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.phone_android_rounded,
+                      }
+                    },
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: primaryColor,
+                      ),
+                      suffixIcon: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _obsecureText = !_obsecureText;
+                          });
+                        },
+                        child: Icon(
+                          _obsecureText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                           color: primaryColor,
                         ),
-                        labelText: "Phone",
-                        labelStyle: TextStyle(color: primaryColor),
-                        enabledBorder: OutlineInputBorder(
+                      ),
+                      labelText: "Password",
+                      labelStyle: TextStyle(color: primaryColor),
+                      enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: primaryColor,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: primaryColor, // Border color when focused
-                            width: 2.0,
-                          ),
+                        color: primaryColor,
+                      )),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor, // Border color when focused
+                          width: 2.0,
                         ),
                       ),
                     ),
@@ -213,104 +259,48 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   SizedBox(
                     height: 15,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 25.0,
-                    ),
-                    child: TextFormField(
-                      cursorColor: primaryColor,
-                      controller: passwordController,
-                      obscureText: _obsecureText,
-                      validator: (value) {
-                        if (value == "" || value!.length < 8) {
-                          return "Password must be greater or equal to 8 characters!";
-                        } else {
-                          return null;
-                        }
-                      },
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.lock,
+                  TextFormField(
+                    cursorColor: primaryColor,
+                    controller: cPasswordController,
+                    obscureText: _obsecureText,
+                    validator: (value) {
+                      if (value != passwordController.text) {
+                        return "Password did not match";
+                      }
+                      if (value == "") {
+                        return "Password must be greater or equal to 8 characters!";
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: primaryColor,
+                      ),
+                      suffixIcon: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _obsecureText = !_obsecureText;
+                          });
+                        },
+                        child: Icon(
+                          _obsecureText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                           color: primaryColor,
-                        ),
-                        suffixIcon: InkWell(
-                          onTap: () {
-                            setState(() {
-                              _obsecureText = !_obsecureText;
-                            });
-                          },
-                          child: Icon(
-                            _obsecureText
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: primaryColor,
-                          ),
-                        ),
-                        labelText: "Password",
-                        labelStyle: TextStyle(color: primaryColor),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                          color: primaryColor,
-                        )),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: primaryColor, // Border color when focused
-                            width: 2.0,
-                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 25.0,
-                    ),
-                    child: TextFormField(
-                      cursorColor: primaryColor,
-                      controller: cPasswordController,
-                      obscureText: _obsecureText,
-                      validator: (value) {
-                        if (value != passwordController.text) {
-                          return "Password did not match";
-                        }
-                        if (value == "") {
-                          return "Password must be greater or equal to 8 characters!";
-                        } else {
-                          return null;
-                        }
-                      },
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.lock,
-                          color: primaryColor,
-                        ),
-                        suffixIcon: InkWell(
-                          onTap: () {
-                            setState(() {
-                              _obsecureText = !_obsecureText;
-                            });
-                          },
-                          child: Icon(
-                            _obsecureText
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: primaryColor,
-                          ),
-                        ),
-                        labelText: "Confirm Password",
-                        labelStyle: TextStyle(color: primaryColor),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                          color: primaryColor,
-                        )),
-                        focusedBorder: OutlineInputBorder(
+                      labelText: "Confirm Password",
+                      labelStyle: TextStyle(color: primaryColor),
+                      enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: primaryColor, // Border color when focused
-                            width: 2.0,
-                          ),
+                        color: primaryColor,
+                      )),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor, // Border color when focused
+                          width: 2.0,
                         ),
                       ),
                     ),
@@ -320,13 +310,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   ),
                   InkWell(
                       onTap: () {
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => VerifyPhone(
-                        //               number: phoneController.text.trim(),
-                        //             )));
-                        // // verify();
+                        verify();
                       },
                       child: !isCreated
                           ? CustomButton(

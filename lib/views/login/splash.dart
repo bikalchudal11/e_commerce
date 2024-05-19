@@ -4,6 +4,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/views/login/login.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -71,7 +72,11 @@ class _SplashScreenState extends State<SplashScreen> {
                   TypewriterAnimatedText('Start your day with joy'),
                 ],
               ),
-            )
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            LoadingAnimationWidget.stretchedDots(color: primaryColor, size: 60)
           ],
         ),
       ),

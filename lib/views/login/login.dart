@@ -1,11 +1,15 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'dart:convert';
+
 import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/resources/custom_button.dart';
+import 'package:e_commerce/views/home/home_page.dart';
 import 'package:e_commerce/views/login/create_account.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -15,21 +19,36 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passController = TextEditingController();
   bool _obsecureText = true;
   bool isRemember = false;
   final _formKey = GlobalKey<FormState>();
   bool isLogin = false;
 
-  login() {
+  Future<void> login() async {
     final isValid = _formKey.currentState?.validate();
     if (isValid == true) {
-      setState(() {
-        isLogin = true;
-      });
-      // Future.delayed(Duration(seconds: 2), () {
-      //   Navigator.pushReplacement(
-      //       context, MaterialPageRoute(builder: (context) => HomePage()));
-      // });
+      var response = await http.post(Uri.parse("$baseApi" + "login"),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'email': emailController.text,
+            'password': passController.text,
+          }));
+      var decodedResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          isLogin = true;
+        });
+        Future.delayed(Duration(seconds: 2), () {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => HomePage()));
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.red, content: Text("Invalid credential!")));
+      }
     }
   }
 
@@ -38,23 +57,23 @@ class _LogInScreenState extends State<LogInScreen> {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Form(
-              key: _formKey,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage('assets/images/bg.jpg'),
-                    colorFilter: ColorFilter.mode(
-                      Colors.white.withOpacity(0.07),
-                      BlendMode.dstATop,
-                    ),
+          child: Form(
+            key: _formKey,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/images/bg.jpg'),
+                  colorFilter: ColorFilter.mode(
+                    Colors.white.withOpacity(0.05),
+                    BlendMode.dstATop,
                   ),
                 ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(25.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -73,41 +92,37 @@ class _LogInScreenState extends State<LogInScreen> {
                     SizedBox(
                       height: 60,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 25.0,
-                      ),
-                      child: TextFormField(
-                        cursorColor: primaryColor,
-                        validator: (value) {
-                          if (value == "") {
-                            return 'Please enter your email';
-                          }
-                          // Regular expression for email validation
-                          final emailRegex =
-                              RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                          if (!emailRegex.hasMatch(value!)) {
-                            return 'Please enter a valid email';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.email,
+                    TextFormField(
+                      controller: emailController,
+                      cursorColor: primaryColor,
+                      validator: (value) {
+                        if (value == "") {
+                          return 'Please enter your email';
+                        }
+                        // Regular expression for email validation
+                        final emailRegex =
+                            RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                        if (!emailRegex.hasMatch(value!)) {
+                          return 'Please enter a valid email';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.email,
+                          color: primaryColor,
+                        ),
+                        labelText: "Email",
+                        labelStyle: TextStyle(color: primaryColor),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
                             color: primaryColor,
                           ),
-                          labelText: "Email",
-                          labelStyle: TextStyle(color: primaryColor),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: primaryColor,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: primaryColor, // Border color when focused
-                              width: 2.0,
-                            ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: primaryColor, // Border color when focused
+                            width: 2.0,
                           ),
                         ),
                       ),
@@ -115,51 +130,47 @@ class _LogInScreenState extends State<LogInScreen> {
                     SizedBox(
                       height: 15,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 25.0,
-                      ),
-                      child: TextFormField(
-                        cursorColor: primaryColor,
-                        obscureText: _obsecureText,
-                        validator: (value) {
-                          if (value == "") {
-                            return "Please enter your password!";
-                          } else if (value!.length < 8) {
-                            return "Please enter valid password!";
-                          } else {
-                            return null;
-                          }
-                        },
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.lock,
+                    TextFormField(
+                      controller: passController,
+                      cursorColor: primaryColor,
+                      obscureText: _obsecureText,
+                      validator: (value) {
+                        if (value == "") {
+                          return "Please enter your password!";
+                        } else if (value!.length < 8) {
+                          return "Please enter valid password!";
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: primaryColor,
+                        ),
+                        suffixIcon: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _obsecureText = !_obsecureText;
+                            });
+                          },
+                          child: Icon(
+                            _obsecureText
+                                ? Icons.visibility
+                                : Icons.visibility_off,
                             color: primaryColor,
                           ),
-                          suffixIcon: InkWell(
-                            onTap: () {
-                              setState(() {
-                                _obsecureText = !_obsecureText;
-                              });
-                            },
-                            child: Icon(
-                              _obsecureText
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: primaryColor,
-                            ),
-                          ),
-                          labelText: "Password",
-                          labelStyle: TextStyle(color: primaryColor),
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: primaryColor,
-                          )),
-                          focusedBorder: OutlineInputBorder(
+                        ),
+                        labelText: "Password",
+                        labelStyle: TextStyle(color: primaryColor),
+                        enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color: primaryColor, // Border color when focused
-                              width: 2.0,
-                            ),
+                          color: primaryColor,
+                        )),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: primaryColor, // Border color when focused
+                            width: 2.0,
                           ),
                         ),
                       ),
