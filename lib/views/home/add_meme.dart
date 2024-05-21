@@ -1,15 +1,33 @@
+import 'dart:io';
 import 'package:e_commerce/resources/constant.dart';
-import 'package:e_commerce/resources/custom_button.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
-class AddMeme extends StatelessWidget {
+class AddMeme extends StatefulWidget {
   const AddMeme({super.key});
 
   @override
+  State<AddMeme> createState() => _AddMemeState();
+}
+
+class _AddMemeState extends State<AddMeme> {
+  XFile? image;
+  final ImagePicker picker = ImagePicker();
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: primaryColor,
+        foregroundColor: secondaryColor,
+        title: Text(
+          "Add meme",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -49,74 +67,107 @@ class AddMeme extends StatelessWidget {
                   height: 5,
                 ),
                 InkWell(
-                  onTap: () {},
-                  child: Container(
-                    height: MediaQuery.of(context).size.width * 0.4,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        // ignore: prefer_const_literals_to_create_immutables
-                        children: [
-                          Icon(
-                            Icons.add_a_photo_outlined,
-                            size: 30,
+                  onTap: () async {
+                    image = await picker.pickImage(source: ImageSource.gallery);
+                    setState(() {});
+                  },
+                  child: image == null
+                      ? Container(
+                          height: MediaQuery.of(context).size.width * 0.4,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(),
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "Click to choose a file",
-                            style: TextStyle(
-                              fontSize: 17,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              // ignore: prefer_const_literals_to_create_immutables
+                              children: [
+                                Icon(
+                                  Icons.add_a_photo_outlined,
+                                  size: 30,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "Click to choose a meme",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-                // Container(
-                //   height: MediaQuery.of(context).size.width * 0.9,
-                //   decoration: BoxDecoration(
-                //       borderRadius: BorderRadius.circular(10),
-                //       image: DecorationImage(
-                //           fit: BoxFit.fill,
-                //           image: NetworkImage(
-                //               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtw1w0P9_gX9H5gsnBFZmazGkBQ3z7bt4iE4_MR-T5LQ&s'))),
-                // ),
-                // SizedBox(
-                //   height: 10,
-                // ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     IconButton(
-                //       onPressed: () {},
-                //       icon: Icon(Icons.close),
-                //     ),
-                //     SizedBox(
-                //       width: 10,
-                //     ),
-                //     TextButton(
-                //       style: ButtonStyle(
-                //           side: MaterialStatePropertyAll(BorderSide())),
-                //       onPressed: () {},
-                //       child: Text(
-                //         "Choose Another",
-                //         style: TextStyle(
-                //           color: Colors.black,
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // )
+                        )
+                      : Column(
+                          children: [
+                            Container(
+                              height: MediaQuery.of(context).size.width * 0.9,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image: FileImage(File(image!.path)))),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    image = null;
+                                    setState(() {});
+                                  },
+                                  icon: Icon(Icons.close),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                TextButton(
+                                  style: ButtonStyle(
+                                      side: MaterialStatePropertyAll(
+                                          BorderSide())),
+                                  onPressed: () async {
+                                    image = await picker.pickImage(
+                                      source: ImageSource.gallery,
+                                    );
+                                    setState(() {});
+                                  },
+                                  child: Text(
+                                    "Choose Another",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                ),
               ],
             ),
-            CustomButton(buttonName: "Post this meme")
+            Align(
+              alignment: Alignment.center,
+              child: TextButton(
+                style: ButtonStyle(
+                    fixedSize: MaterialStatePropertyAll(Size.fromWidth(400)),
+                    backgroundColor: MaterialStatePropertyAll(
+                        image == null ? Colors.grey : primaryColor),
+                    foregroundColor: MaterialStatePropertyAll(secondaryColor)),
+                onPressed: image == null ? null : () {},
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Text(
+                    "Post this meme",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),

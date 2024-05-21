@@ -1,4 +1,5 @@
 import 'package:e_commerce/provider/auth_provider.dart';
+import 'package:e_commerce/provider/meme_provider.dart';
 import 'package:e_commerce/views/home/home_page.dart';
 import 'package:e_commerce/views/login/login.dart';
 import 'package:e_commerce/views/login/splash.dart';
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => MemeProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(fontFamily: "poppins"),

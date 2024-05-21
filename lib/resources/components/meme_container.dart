@@ -26,79 +26,76 @@ class MemeContainer extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ListTile(
-              contentPadding: EdgeInsets.all(0),
-              leading: CircleAvatar(
-                radius: 30,
-                child: Icon(
-                  Icons.person,
-                  size: 30,
-                ),
-              ),
-              title: Text(
-                name,
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              subtitle: Text(createdAt),
-              trailing: IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.more_vert),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.all(0),
+            leading: CircleAvatar(
+              radius: 30,
+              child: Icon(
+                Icons.person,
+                size: 30,
               ),
             ),
-            SizedBox(
-              height: 5,
+            title: Text(
+              name,
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-            Text(caption!),
-            SizedBox(
-              height: 15,
+            subtitle: Text(createdAt),
+            trailing: IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.more_vert),
             ),
-            Container(
-              height: MediaQuery.of(context).size.width / 1.5,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(
-                      fit: BoxFit.cover, image: NetworkImage(filePath))),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.favorite,
-                      color: Colors.red,
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text("4 likes")
-                  ],
-                ),
-                Icon(
-                  Icons.bookmark_outline,
-                  size: 30,
-                )
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Divider(
-              thickness: 2,
-            )
-          ],
-        ),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Text(caption!),
+          SizedBox(
+            height: 15,
+          ),
+          Container(
+            height: MediaQuery.of(context).size.width / 1.5,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                    fit: BoxFit.fill, image: NetworkImage(filePath))),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.favorite,
+                    color: Colors.red,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text("4 likes")
+                ],
+              ),
+              Icon(
+                Icons.bookmark_outline,
+                size: 30,
+              )
+            ],
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Divider(
+            thickness: 2,
+          )
+        ],
       ),
     );
   }

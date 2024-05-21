@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
-  String authId = '';
+  static String authId = '';
 
   setAuthId(String id) {
     authId = id;

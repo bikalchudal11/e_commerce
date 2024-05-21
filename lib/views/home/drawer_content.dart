@@ -97,7 +97,7 @@ class _DrawerContentState extends State<DrawerContent> {
                 ),
                 Divider(),
                 SizedBox(
-                  height: 15,
+                  height: 20,
                 ),
                 DrawerTile(
                   tileIcon: Icon(Icons.settings_outlined),
