@@ -1,14 +1,25 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_literals_to_create_immutables, must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class MemeContainer extends StatelessWidget {
-  const MemeContainer({
-    super.key,
-  });
+  String name;
+  String createdAt;
+  String? caption;
+  String filePath;
+  MemeContainer(
+      {super.key,
+      required this.name,
+      required this.createdAt,
+      this.caption = "",
+      required this.filePath});
 
   @override
   Widget build(BuildContext context) {
+    DateTime dateTime = DateTime.parse(createdAt);
+    DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+    createdAt = dateFormat.format(dateTime);
     return Container(
       height: MediaQuery.of(context).size.height * 0.60,
       width: MediaQuery.of(context).size.width,
@@ -30,33 +41,31 @@ class MemeContainer extends StatelessWidget {
                 ),
               ),
               title: Text(
-                "Hari Bahadur",
+                name,
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              subtitle: Text("24 dec, 2025"),
+              subtitle: Text(createdAt),
               trailing: IconButton(
                 onPressed: () {},
                 icon: Icon(Icons.more_vert),
               ),
             ),
             SizedBox(
-              height: 10,
-            ),
-            Text("Post description"),
-            SizedBox(
               height: 5,
+            ),
+            Text(caption!),
+            SizedBox(
+              height: 15,
             ),
             Container(
               height: MediaQuery.of(context).size.width / 1.5,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtw1w0P9_gX9H5gsnBFZmazGkBQ3z7bt4iE4_MR-T5LQ&s'))),
+                      fit: BoxFit.cover, image: NetworkImage(filePath))),
             ),
             SizedBox(
               height: 10,

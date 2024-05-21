@@ -9,7 +9,12 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
-  late String authId = "";
+  String authId = '';
+
+  setAuthId(String id) {
+    authId = id;
+    notifyListeners();
+  }
 
   Map<String, dynamic> userDetails = {};
 
@@ -34,6 +39,7 @@ class AuthProvider with ChangeNotifier {
       );
       var decodedResponse = jsonDecode(response.body);
       userDetails = decodedResponse;
+      // print(authId);
 
       notifyListeners();
     } else {

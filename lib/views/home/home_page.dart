@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
+import 'dart:convert';
+
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/resources/components/meme_container.dart';
 import 'package:e_commerce/resources/constant.dart';
@@ -7,6 +9,7 @@ import 'package:e_commerce/views/home/add_meme.dart';
 import 'package:e_commerce/views/home/drawer_content.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,6 +19,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String? accessToken;
   @override
   void initState() {
     showUserDetails();
@@ -24,7 +28,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> showUserDetails() async {
     var prov = Provider.of<AuthProvider>(context, listen: false);
-    // print(prov.authId);
+    accessToken = prov.authId;
+    // print(accessToken);
   }
 
   @override
@@ -73,13 +78,51 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(25.0),
-        child: ListView.builder(
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              return MemeContainer();
-            }),
-      ),
+          padding: const EdgeInsets.all(25.0),
+          child: FutureBuilder(
+            future: http.get(
+              Uri.parse("$baseApi" + "memes"),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $accessToken'
+              },
+            ),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var response = snapshot.data!;
+                var decodedResponse = jsonDecode(response.body);
+                if (response.statusCode == 200) {
+                  List<Map<String, dynamic>> memesList;
+                  memesList = (decodedResponse as List<dynamic>)
+                      .map((e) => e as Map<String, dynamic>)
+                      .toList();
+                  // print(memesList);
+                  // print(memesList[0]['caption']);
+                  return ListView(
+                    children: memesList
+                        .map((e) => MemeContainer(
+                              name: e['uploadedBy']['name'],
+                              caption: e['caption'],
+                              createdAt: e['createdAt'],
+                              filePath: e['filePath'],
+                            ))
+                        .toList(),
+                  );
+                } else {
+                  return Text(decodedResponse['message']);
+                }
+
+                // var decodedResponse = jsonDecode(snapshot.data!.body);
+                // print(decodedResponse);
+              } else if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
+          )),
     );
   }
 }

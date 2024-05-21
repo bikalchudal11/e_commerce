@@ -54,9 +54,16 @@ class _LogInScreenState extends State<LogInScreen> {
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => HomePage()));
         });
+
+        //save to shared_preferences
         var prefs = await SharedPreferences.getInstance();
         await prefs.setString(
             "tokens", decodedResponse['tokens']['access']['token']);
+
+        //set that token id
+        var prov = Provider.of<AuthProvider>(context, listen: false);
+        prov.setAuthId(decodedResponse['tokens']['access']['token']);
+        // print(prov.authId);
         // print(prefs.getString("tokens"));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

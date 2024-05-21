@@ -25,9 +25,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _next() async {
+    var prov = Provider.of<AuthProvider>(context, listen: false);
     var prefs = await SharedPreferences.getInstance();
-    String tokenId = prefs.getString("tokens")!;
-    if (tokenId.isNotEmpty) {
+    prov.setAuthId(prefs.getString("tokens")!);
+    if (prov.authId.isNotEmpty) {
       Future.delayed(Duration(milliseconds: 2200), () {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomePage()));
