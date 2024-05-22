@@ -206,7 +206,7 @@ class _AddMemeState extends State<AddMeme> {
 
                           var res = await request.send();
                           final resBody = await res.stream.bytesToString();
-                          print(resBody);
+                          // print(resBody);
                           if (res.statusCode == 201) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 backgroundColor: Colors.green,
