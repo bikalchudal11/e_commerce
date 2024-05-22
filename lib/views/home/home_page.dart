@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
         child: Consumer<MemeProvider>(builder: (context, value, child) {
           return value.isFetchingDone
               ? ListView(
-                  children: value.memesList.reversed
+                  children: value.memesList
                       .map((e) => MemeContainer(
                             name: e['uploadedBy']['name'],
                             caption: e['caption'],

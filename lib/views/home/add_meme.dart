@@ -1,7 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
+import 'package:e_commerce/provider/auth_provider.dart';
+import 'package:e_commerce/provider/meme_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
+import 'package:provider/provider.dart';
 
 class AddMeme extends StatefulWidget {
   const AddMeme({super.key});
@@ -13,6 +21,8 @@ class AddMeme extends StatefulWidget {
 class _AddMemeState extends State<AddMeme> {
   XFile? image;
   final ImagePicker picker = ImagePicker();
+  TextEditingController captionController = TextEditingController();
+  bool isSendingRequest = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +59,7 @@ class _AddMemeState extends State<AddMeme> {
                   height: 5,
                 ),
                 TextField(
+                  controller: captionController,
                   decoration: InputDecoration(
                     hintText: "caption here...",
                     filled: true,
@@ -158,7 +169,63 @@ class _AddMemeState extends State<AddMeme> {
                     backgroundColor: MaterialStatePropertyAll(
                         image == null ? Colors.grey : primaryColor),
                     foregroundColor: MaterialStatePropertyAll(secondaryColor)),
-                onPressed: image == null ? null : () {},
+                onPressed: image == null
+                    ? null
+                    : () async {
+                        try {
+                          setState(() {
+                            isSendingRequest = true;
+                          });
+                          String token = AuthProvider.authId;
+                          String? enteredCaption = captionController.text;
+                          Uri endPoint = Uri.parse('$baseApi' 'memes');
+                          //creating headers
+                          Map<String, String> headers = {
+                            "Authorization": "Bearer $token"
+                          };
+                          //creating request
+                          var request = http.MultipartRequest('POST', endPoint);
+
+                          //setting headers
+                          request.headers.addAll(headers);
+
+                          //putting caption in request
+                          request.fields.addAll({"caption": enteredCaption});
+
+                          // putting file in request
+                          request.files.add(
+                            await http.MultipartFile.fromPath(
+                              "image",
+                              image!.path,
+                              // we need to send mime type of file also.
+                              contentType: MediaType.parse(
+                                lookupMimeType(image!.path)!,
+                              ),
+                            ),
+                          );
+
+                          var res = await request.send();
+                          final resBody = await res.stream.bytesToString();
+                          print(resBody);
+                          if (res.statusCode == 201) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: Colors.green,
+                                content: Text("Meme Uploaded Successfully")));
+                            Navigator.of(context).pop();
+                            Provider.of<MemeProvider>(context, listen: false)
+                                .fetchMemes();
+                          } else {
+                            throw Exception(resBody);
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())));
+                        } finally {
+                          setState(() {
+                            isSendingRequest = false;
+                          });
+                        }
+                      },
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Text(
