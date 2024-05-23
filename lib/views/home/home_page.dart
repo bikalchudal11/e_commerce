@@ -83,10 +83,13 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Consumer<MemeProvider>(builder: (context, value, child) {
+          // print(value.memesList);
           return value.isFetchingDone
               ? ListView(
                   children: value.memesList
                       .map((e) => MemeContainer(
+                            memeId: e["_id"],
+                            likesIds: e["likes"],
                             name: e['uploadedBy']['name'],
                             caption: e['caption'],
                             createdAt: e['createdAt'],

@@ -1,25 +1,35 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, must_be_immutable
-
+// ignore_for_file: prefer_const_literals_to_create_immutables, must_be_immutable, prefer_is_empty
+import 'package:e_commerce/provider/auth_provider.dart';
+import 'package:e_commerce/provider/meme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class MemeContainer extends StatelessWidget {
+  String memeId;
   String name;
   String createdAt;
   String? caption;
   String filePath;
-  MemeContainer(
-      {super.key,
-      required this.name,
-      required this.createdAt,
-      this.caption = "",
-      required this.filePath});
+  List<dynamic>? likesIds;
+  MemeContainer({
+    super.key,
+    required this.name,
+    required this.memeId,
+    required this.createdAt,
+    this.caption = "",
+    required this.filePath,
+    required this.likesIds,
+  });
 
   @override
   Widget build(BuildContext context) {
     DateTime dateTime = DateTime.parse(createdAt);
     DateFormat dateFormat = DateFormat('yyyy-MM-dd');
     createdAt = dateFormat.format(dateTime);
+    var prov = Provider.of<AuthProvider>(context, listen: false);
+    String userId = prov.userDetails["id"];
+    // print(userId);
     return Container(
       height: MediaQuery.of(context).size.height * 0.60,
       width: MediaQuery.of(context).size.width,
@@ -73,14 +83,27 @@ class MemeContainer extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                  ),
+                  Consumer<MemeProvider>(builder: (context, value, child) {
+                    return IconButton(
+                      onPressed: () {
+                        value.toggleLike(memeId);
+                      },
+                      icon: Icon(
+                          likesIds!.contains(userId)
+                              ? Icons.favorite
+                              : Icons.favorite_outline,
+                          color: likesIds!.contains(userId)
+                              ? Colors.red
+                              : Colors.black),
+                    );
+                  }),
                   SizedBox(
                     width: 5,
                   ),
-                  Text("4 likes")
+                  Text(
+                    ((likesIds!.length) == 0 ? " " : "${likesIds!.length} ") +
+                        ((likesIds!.length == 1) ? "like" : "likes"),
+                  )
                 ],
               ),
               Icon(
