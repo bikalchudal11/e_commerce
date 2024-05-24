@@ -174,6 +174,9 @@ class _EditProfileState extends State<EditProfile> {
                   prov.userDetails['email'] = emailController.text;
                   prov.userDetails['phone'] = phoneController.text;
 
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.green,
+                      content: Text("Profile Updated!")));
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
