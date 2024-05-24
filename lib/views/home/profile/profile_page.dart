@@ -2,6 +2,8 @@
 
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
+import 'package:e_commerce/resources/custom_button.dart';
+import 'package:e_commerce/views/home/profile/edit_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +14,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var prov = Provider.of<AuthProvider>(context, listen: false);
     var user = prov.userDetails;
+    // print(user);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
@@ -29,32 +32,47 @@ class ProfilePage extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CircleAvatar(
-                radius: 60,
-                child: Icon(
-                  Icons.person,
-                  size: 50,
-                ),
+              Column(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    child: Icon(
+                      Icons.person,
+                      size: 50,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  UserInfoRow(
+                    user: user,
+                    title: "Name",
+                    value: 'name',
+                  ),
+                  UserInfoRow(
+                    user: user,
+                    title: "Email",
+                    value: 'email',
+                  ),
+                  UserInfoRow(
+                    user: user,
+                    title: "Phone",
+                    value: 'phone',
+                  ),
+                ],
               ),
-              SizedBox(
-                height: 30,
-              ),
-              UserInfoRow(
-                user: user,
-                title: "Name",
-                value: 'name',
-              ),
-              UserInfoRow(
-                user: user,
-                title: "Email",
-                value: 'email',
-              ),
-              UserInfoRow(
-                user: user,
-                title: "Phone",
-                value: 'phone',
-              ),
+              InkWell(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProfile(user: user),
+                      ),
+                    );
+                  },
+                  child: CustomButton(buttonName: "Edit Profile"))
             ],
           ),
         ),

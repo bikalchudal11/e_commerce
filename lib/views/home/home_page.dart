@@ -6,7 +6,7 @@ import 'package:e_commerce/resources/components/meme_container.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/views/home/add_meme.dart';
 import 'package:e_commerce/views/home/drawer_content.dart';
-import 'package:e_commerce/views/home/profile_page.dart';
+import 'package:e_commerce/views/home/profile/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

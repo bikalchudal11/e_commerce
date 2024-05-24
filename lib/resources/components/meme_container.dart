@@ -169,39 +169,27 @@ class _MemeContainerState extends State<MemeContainer> {
             height: 10,
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Consumer<MemeProvider>(builder: (context, value, child) {
-                    return IconButton(
-                      onPressed: () {
-                        value.toggleLike(widget.memeId);
-                      },
-                      icon: Icon(
-                          widget.likesIds!.contains(userId)
-                              ? Icons.favorite
-                              : Icons.favorite_outline,
-                          color: widget.likesIds!.contains(userId)
-                              ? Colors.red
-                              : Colors.black),
-                    );
-                  }),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    ((widget.likesIds!.length) == 0
-                            ? " "
-                            : "${widget.likesIds!.length} ") +
-                        ((widget.likesIds!.length == 1) ? "like" : "likes"),
-                  )
-                ],
+              Consumer<MemeProvider>(builder: (context, value, child) {
+                return IconButton(
+                  onPressed: () {
+                    value.toggleLike(widget.memeId);
+                  },
+                  icon: Icon(
+                      widget.likesIds!.contains(userId)
+                          ? Icons.favorite
+                          : Icons.favorite_outline,
+                      color: widget.likesIds!.contains(userId)
+                          ? Colors.red
+                          : Colors.black),
+                );
+              }),
+              Text(
+                ((widget.likesIds!.length) == 0
+                        ? " "
+                        : "${widget.likesIds!.length} ") +
+                    ((widget.likesIds!.length == 1) ? "like" : "likes"),
               ),
-              Icon(
-                Icons.bookmark_outline,
-                size: 30,
-              )
             ],
           ),
           SizedBox(
