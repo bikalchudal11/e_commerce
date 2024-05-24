@@ -1,7 +1,5 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
-import 'dart:convert';
-
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/provider/meme_provider.dart';
 import 'package:e_commerce/resources/components/meme_container.dart';
@@ -11,7 +9,6 @@ import 'package:e_commerce/views/home/drawer_content.dart';
 import 'package:e_commerce/views/home/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,14 +26,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> showUserDetails() async {
-    var prov = Provider.of<AuthProvider>(context, listen: false);
+    Provider.of<AuthProvider>(context, listen: false);
     accessToken = AuthProvider.authId;
-    // print(accessToken);
   }
 
   @override
   Widget build(BuildContext context) {
-    var prov = Provider.of<MemeProvider>(context, listen: false);
+    Provider.of<MemeProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -83,7 +79,6 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Consumer<MemeProvider>(builder: (context, value, child) {
-          // print(value.memesList);
           return value.isFetchingDone
               ? ListView(
                   children: value.memesList
