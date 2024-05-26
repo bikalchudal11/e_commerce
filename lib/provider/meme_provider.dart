@@ -1,12 +1,16 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings
+
 import 'dart:convert';
 
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class MemeProvider with ChangeNotifier {
   List<Map<String, dynamic>> memesList = [];
+  List<Map<String, dynamic>> postedMemesList = [];
   bool isFetchingDone = false;
   MemeProvider() {
     fetchMemes();
@@ -25,6 +29,32 @@ class MemeProvider with ChangeNotifier {
     var decodedResponse = jsonDecode(response.body);
     if (response.statusCode == 200) {
       memesList = (decodedResponse as List<dynamic>)
+          .map((e) => e as Map<String, dynamic>)
+          .toList();
+      isFetchingDone = true;
+      notifyListeners();
+    } else {
+      throw (decodedResponse['message']);
+    }
+    notifyListeners();
+  }
+
+  Future<void> fetchPostedMemes(context) async {
+    String token = AuthProvider.authId;
+    var prov = Provider.of<AuthProvider>(context, listen: false);
+    String userId = prov.userDetails['_id']!;
+
+    var response = await http.get(
+      Uri.parse("$baseApi" "memes/" "by" + userId),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+
+    var decodedResponse = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      postedMemesList = (decodedResponse as List<dynamic>)
           .map((e) => e as Map<String, dynamic>)
           .toList();
       isFetchingDone = true;

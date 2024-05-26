@@ -31,7 +31,7 @@ class AuthProvider with ChangeNotifier {
 
     if (authId.isNotEmpty) {
       var response = await http.get(
-        Uri.parse("$baseApi" + "users/me"),
+        Uri.parse("$baseApi" "users/me"),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $authId'
@@ -46,5 +46,21 @@ class AuthProvider with ChangeNotifier {
       print("Auth id empty");
     }
     notifyListeners();
+  }
+
+  Future<void> updateProfile(
+      String name, String phone, String imgPath, context) async {
+    var response = await http.put(Uri.parse("$baseApi" + "users/me"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $authId'
+        },
+        body: jsonEncode({
+          'name': name,
+          'phone': phone,
+        }));
+    var decodedResponse = jsonDecode(response.body);
+    userDetails = decodedResponse;
+    print(decodedResponse);
   }
 }

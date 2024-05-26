@@ -4,11 +4,30 @@ import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/resources/custom_button.dart';
 import 'package:e_commerce/views/home/profile/edit_profile.dart';
+import 'package:e_commerce/views/home/profile/view_page/liked_memes.dart';
+import 'package:e_commerce/views/home/profile/view_page/posted_memes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+class ProfilePage extends StatefulWidget {
+  ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  bool isPosted = true;
+
+  bool isLiked = false;
+
+  showView() {
+    if (isPosted == true) {
+      return PostedMemes();
+    } else {
+      return LikedMemes();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,52 +46,129 @@ class ProfilePage extends StatelessWidget {
           ),
         ),
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(secondaryColor),
+              ),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditProfile(user: user),
+                  ),
+                );
+              },
+              child: Text("Edit"),
+            ),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
+              CircleAvatar(
+                radius: 60,
+                child: Icon(
+                  Icons.person,
+                  size: 50,
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              UserInfoRow(
+                user: user,
+                title: "Name",
+                value: 'name',
+              ),
+              UserInfoRow(
+                user: user,
+                title: "Email",
+                value: 'email',
+              ),
+              UserInfoRow(
+                user: user,
+                title: "Phone",
+                value: 'phone',
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CircleAvatar(
-                    radius: 60,
-                    child: Icon(
-                      Icons.person,
-                      size: 50,
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        isLiked = false;
+                        isPosted = true;
+                      });
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 170,
+                      decoration: BoxDecoration(
+                        color: isPosted ? primaryColor : secondaryColor,
+                        border: Border.all(
+                          color: !isPosted ? primaryColor : Colors.transparent,
+                        ),
+                        borderRadius: BorderRadius.circular(
+                          10,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Posted",
+                          style: TextStyle(
+                            color: !isPosted ? primaryColor : secondaryColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  UserInfoRow(
-                    user: user,
-                    title: "Name",
-                    value: 'name',
-                  ),
-                  UserInfoRow(
-                    user: user,
-                    title: "Email",
-                    value: 'email',
-                  ),
-                  UserInfoRow(
-                    user: user,
-                    title: "Phone",
-                    value: 'phone',
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        isLiked = true;
+                        isPosted = false;
+                      });
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 170,
+                      decoration: BoxDecoration(
+                          color: isLiked ? primaryColor : secondaryColor,
+                          border: Border.all(
+                            color: !isLiked ? primaryColor : Colors.transparent,
+                          ),
+                          borderRadius: BorderRadius.circular(
+                            10,
+                          )),
+                      child: Center(
+                        child: Text(
+                          "Liked",
+                          style: TextStyle(
+                            color: !isLiked ? primaryColor : secondaryColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
-              InkWell(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditProfile(user: user),
-                      ),
-                    );
-                  },
-                  child: CustomButton(buttonName: "Edit Profile"))
+              SizedBox(
+                height: 10,
+              ),
+              showView(),
             ],
           ),
         ),

@@ -36,7 +36,7 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.user);
+    // print(widget.user);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
@@ -75,8 +75,7 @@ class _EditProfileState extends State<EditProfile> {
                                     fit: BoxFit.cover,
                                     image: FileImage(File(profilePic!.path))),
                                 shape: BoxShape.circle,
-                                color:
-                                    const Color.fromARGB(255, 206, 185, 243)),
+                                color: Color.fromARGB(255, 216, 204, 239)),
                           )
                         : Container(
                             height: 120,
@@ -134,23 +133,6 @@ class _EditProfileState extends State<EditProfile> {
                 SizedBox(
                   height: 15,
                 ),
-                Text("Email:"),
-                SizedBox(
-                  height: 5,
-                ),
-                TextField(
-                  controller: emailController,
-                  decoration: InputDecoration(
-                    fillColor: textFieldBgColor,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
                 Text("Phone:"),
                 SizedBox(
                   height: 5,
@@ -170,8 +152,8 @@ class _EditProfileState extends State<EditProfile> {
             InkWell(
                 onTap: () {
                   var prov = Provider.of<AuthProvider>(context, listen: false);
+
                   prov.userDetails['name'] = nameController.text;
-                  prov.userDetails['email'] = emailController.text;
                   prov.userDetails['phone'] = phoneController.text;
 
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(

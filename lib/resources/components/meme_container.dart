@@ -43,7 +43,7 @@ class _MemeContainerState extends State<MemeContainer> {
     widget.createdAt = dateFormat.format(dateTime);
     var prov = Provider.of<AuthProvider>(context, listen: false);
     var provMeme = Provider.of<MemeProvider>(context, listen: false);
-    String userId = prov.userDetails["id"];
+    String? userId = prov.userDetails["id"];
     // print(userId);
     return Container(
       height: MediaQuery.of(context).size.height * 0.60,
