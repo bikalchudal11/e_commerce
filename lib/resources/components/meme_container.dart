@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, must_be_immutable, prefer_is_empty
+// ignore_for_file: prefer_const_literals_to_create_immutables, must_be_immutable, prefer_is_empty, unnecessary_null_comparison
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/provider/meme_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 class MemeContainer extends StatefulWidget {
   String uploadPersonId;
+  String uploaderImg;
   String memeId;
   String name;
   String createdAt;
@@ -17,6 +18,7 @@ class MemeContainer extends StatefulWidget {
   MemeContainer({
     super.key,
     required this.uploadPersonId,
+    required this.uploaderImg,
     required this.name,
     required this.memeId,
     required this.createdAt,
@@ -46,6 +48,7 @@ class _MemeContainerState extends State<MemeContainer> {
     var prov = Provider.of<AuthProvider>(context, listen: false);
     var provMeme = Provider.of<MemeProvider>(context, listen: false);
     String? userId = prov.userDetails["id"];
+
     // print(provMeme.memesList);
     // print(userId);
     // print(widget.uploadPersonId);
@@ -60,14 +63,14 @@ class _MemeContainerState extends State<MemeContainer> {
         children: [
           ListTile(
             contentPadding: EdgeInsets.all(0),
-            leading: (prov.userDetails["imageURL"] != null &&
-                    widget.uploadPersonId == userId)
+            leading: widget.uploaderImg != null
                 ? Container(
                     width: 40,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(prov.userDetails["imageURL"])),
+                          fit: BoxFit.cover,
+                          image: NetworkImage(widget.uploaderImg),
+                        ),
                         shape: BoxShape.circle,
                         color: Color.fromARGB(255, 216, 204, 239)),
                   )
@@ -93,8 +96,55 @@ class _MemeContainerState extends State<MemeContainer> {
                 PopupMenuItem(
                   onTap: () {
                     showDialog(
-                        context: context, builder: (context) => AlertDialog());
-                    provMeme.deleteMeme(widget.memeId, context);
+                        context: context,
+                        builder: (context) => AlertDialog(
+                              title: Text(
+                                "Do you want to delete this meme ?",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              actions: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    TextButton(
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStatePropertyAll(
+                                          primaryColor,
+                                        ),
+                                        foregroundColor:
+                                            MaterialStatePropertyAll(
+                                          secondaryColor,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        provMeme.deleteMeme(
+                                            widget.memeId, context);
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("Yes"),
+                                    ),
+                                    TextButton(
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStatePropertyAll(
+                                          primaryColor,
+                                        ),
+                                        foregroundColor:
+                                            MaterialStatePropertyAll(
+                                          secondaryColor,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("No"),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ));
                   },
                   value: "delete",
                   child: Text("Delete"),

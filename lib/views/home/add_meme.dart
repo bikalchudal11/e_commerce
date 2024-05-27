@@ -163,77 +163,88 @@ class _AddMemeState extends State<AddMeme> {
             ),
             Align(
               alignment: Alignment.center,
-              child: TextButton(
-                style: ButtonStyle(
-                    fixedSize: MaterialStatePropertyAll(Size.fromWidth(400)),
-                    backgroundColor: MaterialStatePropertyAll(
-                        image == null ? Colors.grey : primaryColor),
-                    foregroundColor: MaterialStatePropertyAll(secondaryColor)),
-                onPressed: image == null
-                    ? null
-                    : () async {
-                        try {
-                          setState(() {
-                            isSendingRequest = true;
-                          });
-                          String token = AuthProvider.authId;
-                          String? enteredCaption = captionController.text;
-                          Uri endPoint = Uri.parse('$baseApi' 'memes');
-                          //creating headers
-                          Map<String, String> headers = {
-                            "Authorization": "Bearer $token"
-                          };
-                          //creating request
-                          var request = http.MultipartRequest('POST', endPoint);
+              child: isSendingRequest
+                  ? CircularProgressIndicator()
+                  : TextButton(
+                      style: ButtonStyle(
+                          fixedSize:
+                              MaterialStatePropertyAll(Size.fromWidth(400)),
+                          backgroundColor: MaterialStatePropertyAll(
+                              image == null ? Colors.grey : primaryColor),
+                          foregroundColor:
+                              MaterialStatePropertyAll(secondaryColor)),
+                      onPressed: image == null
+                          ? null
+                          : () async {
+                              try {
+                                setState(() {
+                                  isSendingRequest = true;
+                                });
+                                String token = AuthProvider.authId;
+                                String? enteredCaption = captionController.text;
+                                Uri endPoint = Uri.parse('$baseApi' 'memes');
+                                //creating headers
+                                Map<String, String> headers = {
+                                  "Authorization": "Bearer $token"
+                                };
+                                //creating request
+                                var request =
+                                    http.MultipartRequest('POST', endPoint);
 
-                          //setting headers
-                          request.headers.addAll(headers);
+                                //setting headers
+                                request.headers.addAll(headers);
 
-                          //putting caption in request
-                          request.fields.addAll({"caption": enteredCaption});
+                                //putting caption in request
+                                request.fields
+                                    .addAll({"caption": enteredCaption});
 
-                          // putting file in request
-                          request.files.add(
-                            await http.MultipartFile.fromPath(
-                              "image",
-                              image!.path,
-                              // we need to send mime type of file also.
-                              contentType: MediaType.parse(
-                                lookupMimeType(image!.path)!,
-                              ),
-                            ),
-                          );
+                                // putting file in request
+                                request.files.add(
+                                  await http.MultipartFile.fromPath(
+                                    "image",
+                                    image!.path,
+                                    // we need to send mime type of file also.
+                                    contentType: MediaType.parse(
+                                      lookupMimeType(image!.path)!,
+                                    ),
+                                  ),
+                                );
 
-                          var res = await request.send();
-                          final resBody = await res.stream.bytesToString();
-                          // print(resBody);
-                          if (res.statusCode == 201) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Colors.green,
-                                content: Text("Meme Uploaded Successfully")));
-                            Navigator.of(context).pop();
-                            Provider.of<MemeProvider>(context, listen: false)
-                                .fetchMemes();
-                          } else {
-                            throw Exception(resBody);
-                          }
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(e.toString())));
-                        } finally {
-                          setState(() {
-                            isSendingRequest = false;
-                          });
-                        }
-                      },
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Text(
-                    "Post this meme",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ),
+                                var res = await request.send();
+                                final resBody =
+                                    await res.stream.bytesToString();
+                                // print(resBody);
+                                if (res.statusCode == 201) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          backgroundColor: Colors.green,
+                                          content: Text(
+                                              "Meme Uploaded Successfully")));
+                                  Navigator.of(context).pop();
+                                  Provider.of<MemeProvider>(context,
+                                          listen: false)
+                                      .fetchMemes();
+                                } else {
+                                  throw Exception(resBody);
+                                }
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(e.toString())));
+                              } finally {
+                                setState(() {
+                                  isSendingRequest = false;
+                                });
+                              }
+                            },
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Text(
+                          "Post this meme",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
             )
           ],
         ),

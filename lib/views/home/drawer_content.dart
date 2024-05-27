@@ -78,8 +78,7 @@ class _DrawerContentState extends State<DrawerContent> {
               children: [
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: NetworkImage(
-                      "https://i.pinimg.com/736x/c6/c8/2a/c6c82a034d0b5e6312fbda7776c8aef7.jpg"),
+                  backgroundImage: NetworkImage(prov.userDetails['imageURL']),
                 ),
                 SizedBox(
                   height: 10,

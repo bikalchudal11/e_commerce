@@ -1,8 +1,7 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, prefer_const_constructors_in_immutables
 
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
-import 'package:e_commerce/resources/custom_button.dart';
 import 'package:e_commerce/views/home/profile/edit_profile.dart';
 import 'package:e_commerce/views/home/profile/view_page/liked_memes.dart';
 import 'package:e_commerce/views/home/profile/view_page/posted_memes.dart';
@@ -66,124 +65,128 @@ class _ProfilePageState extends State<ProfilePage> {
           )
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Center(
-          child: Column(
-            children: [
-              user["imageURL"] != null
-                  ? Container(
-                      height: 120,
-                      width: 120,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(user["imageURL"])),
-                          shape: BoxShape.circle,
-                          color: Color.fromARGB(255, 216, 204, 239)),
-                    )
-                  : Container(
-                      height: 120,
-                      width: 120,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color.fromARGB(255, 206, 185, 243)),
-                      // backgroundImage: FileImage(File(profilePic!.path)),
-                      child: Center(
-                        child: Icon(Icons.person),
-                      )),
-              SizedBox(
-                height: 30,
-              ),
-              UserInfoRow(
-                user: user,
-                title: "Name",
-                value: 'name',
-              ),
-              UserInfoRow(
-                user: user,
-                title: "Email",
-                value: 'email',
-              ),
-              UserInfoRow(
-                user: user,
-                title: "Phone",
-                value: 'phone',
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        isLiked = false;
-                        isPosted = true;
-                      });
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 170,
-                      decoration: BoxDecoration(
-                        color: isPosted ? primaryColor : secondaryColor,
-                        border: Border.all(
-                          color: !isPosted ? primaryColor : Colors.transparent,
-                        ),
-                        borderRadius: BorderRadius.circular(
-                          10,
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Posted",
-                          style: TextStyle(
-                            color: !isPosted ? primaryColor : secondaryColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        isLiked = true;
-                        isPosted = false;
-                      });
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 170,
-                      decoration: BoxDecoration(
-                          color: isLiked ? primaryColor : secondaryColor,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Center(
+            child: Column(
+              children: [
+                user["imageURL"] != null
+                    ? Container(
+                        height: 120,
+                        width: 120,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(user["imageURL"])),
+                            shape: BoxShape.circle,
+                            color: Color.fromARGB(255, 216, 204, 239)),
+                      )
+                    : Container(
+                        height: 120,
+                        width: 120,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color.fromARGB(255, 206, 185, 243)),
+                        // backgroundImage: FileImage(File(profilePic!.path)),
+                        child: Center(
+                          child: Icon(Icons.person),
+                        )),
+                SizedBox(
+                  height: 30,
+                ),
+                UserInfoRow(
+                  user: user,
+                  title: "Name",
+                  value: 'name',
+                ),
+                UserInfoRow(
+                  user: user,
+                  title: "Email",
+                  value: 'email',
+                ),
+                UserInfoRow(
+                  user: user,
+                  title: "Phone",
+                  value: 'phone',
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          isLiked = false;
+                          isPosted = true;
+                        });
+                      },
+                      child: Container(
+                        height: 40,
+                        width: 170,
+                        decoration: BoxDecoration(
+                          color: isPosted ? primaryColor : secondaryColor,
                           border: Border.all(
-                            color: !isLiked ? primaryColor : Colors.transparent,
+                            color:
+                                !isPosted ? primaryColor : Colors.transparent,
                           ),
                           borderRadius: BorderRadius.circular(
                             10,
-                          )),
-                      child: Center(
-                        child: Text(
-                          "Liked",
-                          style: TextStyle(
-                            color: !isLiked ? primaryColor : secondaryColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Posted",
+                            style: TextStyle(
+                              color: !isPosted ? primaryColor : secondaryColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              showView(),
-            ],
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          isLiked = true;
+                          isPosted = false;
+                        });
+                      },
+                      child: Container(
+                        height: 40,
+                        width: 170,
+                        decoration: BoxDecoration(
+                            color: isLiked ? primaryColor : secondaryColor,
+                            border: Border.all(
+                              color:
+                                  !isLiked ? primaryColor : Colors.transparent,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              10,
+                            )),
+                        child: Center(
+                          child: Text(
+                            "Liked",
+                            style: TextStyle(
+                              color: !isLiked ? primaryColor : secondaryColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                showView(),
+              ],
+            ),
           ),
         ),
       ),

@@ -11,7 +11,10 @@ import 'package:provider/provider.dart';
 class MemeProvider with ChangeNotifier {
   List<Map<String, dynamic>> memesList = [];
   List<Map<String, dynamic>> postedMemesList = [];
+  List<Map<String, dynamic>> likedMemesList = [];
   bool isFetchingDone = false;
+  bool isPosted = false;
+  bool isLiked = false;
   MemeProvider() {
     fetchMemes();
   }
@@ -36,16 +39,17 @@ class MemeProvider with ChangeNotifier {
     } else {
       throw (decodedResponse['message']);
     }
+
     notifyListeners();
   }
 
   Future<void> fetchPostedMemes(context) async {
     String token = AuthProvider.authId;
     var prov = Provider.of<AuthProvider>(context, listen: false);
-    String userId = prov.userDetails['_id']!;
+    String userId = prov.userDetails['id']!;
 
     var response = await http.get(
-      Uri.parse("$baseApi" "memes/" "by" + userId),
+      Uri.parse("$baseApi" "memes/" "by/" + userId),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
@@ -57,7 +61,39 @@ class MemeProvider with ChangeNotifier {
       postedMemesList = (decodedResponse as List<dynamic>)
           .map((e) => e as Map<String, dynamic>)
           .toList();
-      isFetchingDone = true;
+      // print(postedMemesList);
+      // print(decodedResponse);
+      isPosted = true;
+
+      notifyListeners();
+    } else {
+      throw (decodedResponse['message']);
+    }
+    notifyListeners();
+  }
+
+  Future<void> fetchLikedMemes(context) async {
+    String token = AuthProvider.authId;
+    var prov = Provider.of<AuthProvider>(context, listen: false);
+    String userId = prov.userDetails['id']!;
+
+    var response = await http.get(
+      Uri.parse("$baseApi" "memes/" "liked/" + userId),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+
+    var decodedResponse = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      likedMemesList = (decodedResponse as List<dynamic>)
+          .map((e) => e as Map<String, dynamic>)
+          .toList();
+      // print(likedMemesList);
+      // print(decodedResponse);
+      isLiked = true;
+
       notifyListeners();
     } else {
       throw (decodedResponse['message']);

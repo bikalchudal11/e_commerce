@@ -3,6 +3,7 @@
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/provider/meme_provider.dart';
 import 'package:e_commerce/resources/components/meme_container.dart';
+import 'package:e_commerce/resources/components/memes.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/views/home/add_meme.dart';
 import 'package:e_commerce/views/home/drawer_content.dart';
@@ -76,27 +77,19 @@ class _HomePageState extends State<HomePage> {
           size: 30,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Consumer<MemeProvider>(builder: (context, value, child) {
-          return value.isFetchingDone
-              ? ListView(
-                  children: value.memesList
-                      .map((e) => MemeContainer(
-                            memeId: e["_id"],
-                            likesIds: e["likes"],
-                            name: e['uploadedBy']['name'],
-                            uploadPersonId: e['uploadedBy']['id'],
-                            caption: e['caption'],
-                            createdAt: e['createdAt'],
-                            filePath: e['filePath'],
-                          ))
-                      .toList(),
-                )
-              : Center(
-                  child: CircularProgressIndicator(),
-                );
-        }),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Consumer<MemeProvider>(
+            builder: (context, value, child) {
+              return value.isFetchingDone
+                  ? MemeList(memes: value.memesList)
+                  : Center(
+                      child: CircularProgressIndicator(),
+                    );
+            },
+          ),
+        ),
       ),
     );
   }
