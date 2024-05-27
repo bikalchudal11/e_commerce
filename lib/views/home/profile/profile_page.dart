@@ -71,13 +71,27 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Center(
           child: Column(
             children: [
-              CircleAvatar(
-                radius: 60,
-                child: Icon(
-                  Icons.person,
-                  size: 50,
-                ),
-              ),
+              user["imageURL"] != null
+                  ? Container(
+                      height: 120,
+                      width: 120,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(user["imageURL"])),
+                          shape: BoxShape.circle,
+                          color: Color.fromARGB(255, 216, 204, 239)),
+                    )
+                  : Container(
+                      height: 120,
+                      width: 120,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color.fromARGB(255, 206, 185, 243)),
+                      // backgroundImage: FileImage(File(profilePic!.path)),
+                      child: Center(
+                        child: Icon(Icons.person),
+                      )),
               SizedBox(
                 height: 30,
               ),

@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MemeContainer extends StatefulWidget {
+  String uploadPersonId;
   String memeId;
   String name;
   String createdAt;
@@ -15,10 +16,11 @@ class MemeContainer extends StatefulWidget {
   List<dynamic>? likesIds;
   MemeContainer({
     super.key,
+    required this.uploadPersonId,
     required this.name,
     required this.memeId,
     required this.createdAt,
-    this.caption = "",
+    required this.caption,
     required this.filePath,
     required this.likesIds,
   });
@@ -31,7 +33,7 @@ class _MemeContainerState extends State<MemeContainer> {
   TextEditingController captionController = TextEditingController();
   @override
   void initState() {
-    captionController.text = widget.caption!;
+    captionController.text = widget.caption.toString();
     super.initState();
   }
 
@@ -44,7 +46,9 @@ class _MemeContainerState extends State<MemeContainer> {
     var prov = Provider.of<AuthProvider>(context, listen: false);
     var provMeme = Provider.of<MemeProvider>(context, listen: false);
     String? userId = prov.userDetails["id"];
+    // print(provMeme.memesList);
     // print(userId);
+    // print(widget.uploadPersonId);
     return Container(
       height: MediaQuery.of(context).size.height * 0.60,
       width: MediaQuery.of(context).size.width,
@@ -56,13 +60,26 @@ class _MemeContainerState extends State<MemeContainer> {
         children: [
           ListTile(
             contentPadding: EdgeInsets.all(0),
-            leading: CircleAvatar(
-              radius: 30,
-              child: Icon(
-                Icons.person,
-                size: 30,
-              ),
-            ),
+            leading: (prov.userDetails["imageURL"] != null &&
+                    widget.uploadPersonId == userId)
+                ? Container(
+                    width: 40,
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(prov.userDetails["imageURL"])),
+                        shape: BoxShape.circle,
+                        color: Color.fromARGB(255, 216, 204, 239)),
+                  )
+                : Container(
+                    width: 40,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color.fromARGB(255, 206, 185, 243)),
+                    // backgroundImage: FileImage(File(profilePic!.path)),
+                    child: Center(
+                      child: Icon(Icons.person),
+                    )),
             title: Text(
               widget.name,
               style: TextStyle(
@@ -154,7 +171,7 @@ class _MemeContainerState extends State<MemeContainer> {
           SizedBox(
             height: 5,
           ),
-          Text(widget.caption!),
+          Text(widget.caption == null ? "" : widget.caption.toString()),
           SizedBox(
             height: 15,
           ),

@@ -86,6 +86,7 @@ class _HomePageState extends State<HomePage> {
                             memeId: e["_id"],
                             likesIds: e["likes"],
                             name: e['uploadedBy']['name'],
+                            uploadPersonId: e['uploadedBy']['id'],
                             caption: e['caption'],
                             createdAt: e['createdAt'],
                             filePath: e['filePath'],
