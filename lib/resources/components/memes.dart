@@ -3,13 +3,18 @@ import 'package:flutter/material.dart';
 
 class MemeList extends StatelessWidget {
   List<Map<String, dynamic>> memes;
-  MemeList({super.key, required this.memes});
+
+  MemeList({
+    super.key,
+    required this.memes,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: memes
           .map((e) => MemeContainer(
+                otherUserInfo: e['uploadedBy'],
                 memeId: e["_id"],
                 likesIds: e["likes"],
                 name: e['uploadedBy']['name'],

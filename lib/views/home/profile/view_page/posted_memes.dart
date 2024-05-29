@@ -6,12 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PostedMemes extends StatelessWidget {
-  const PostedMemes({super.key});
+  String id;
+  PostedMemes({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<MemeProvider>(context, listen: false);
-    prov.fetchPostedMemes(context);
+    prov.fetchPostedMemes(context, id);
     return Consumer<MemeProvider>(
       builder: (context, value, child) {
         return value.isPosted

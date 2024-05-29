@@ -9,7 +9,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({super.key});
+  String name, email, phone, id;
+  String? imageUrl;
+  ProfilePage({
+    super.key,
+    required this.email,
+    required this.name,
+    required this.phone,
+    this.imageUrl,
+    required this.id,
+  });
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -22,17 +31,19 @@ class _ProfilePageState extends State<ProfilePage> {
 
   showView() {
     if (isPosted == true) {
-      return PostedMemes();
+      return PostedMemes(
+        id: widget.id,
+      );
     } else {
-      return LikedMemes();
+      return LikedMemes(
+        id: widget.id,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<AuthProvider>(context, listen: false);
-    var user = prov.userDetails;
-    // print(user);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
@@ -46,23 +57,29 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         centerTitle: true,
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: TextButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(secondaryColor),
-              ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditProfile(user: user),
+          widget.id == prov.userDetails['id']
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: TextButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(secondaryColor),
+                    ),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditProfile(
+                            name: widget.name,
+                            phone: widget.phone,
+                            imageUrl: widget.imageUrl,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text("Edit"),
                   ),
-                );
-              },
-              child: Text("Edit"),
-            ),
-          )
+                )
+              : SizedBox()
         ],
       ),
       body: SingleChildScrollView(
@@ -71,14 +88,14 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Center(
             child: Column(
               children: [
-                user["imageURL"] != null
+                widget.imageUrl != null
                     ? Container(
                         height: 120,
                         width: 120,
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(user["imageURL"])),
+                                image: NetworkImage(widget.imageUrl!)),
                             shape: BoxShape.circle,
                             color: Color.fromARGB(255, 216, 204, 239)),
                       )
@@ -96,19 +113,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   height: 30,
                 ),
                 UserInfoRow(
-                  user: user,
                   title: "Name",
-                  value: 'name',
+                  value: widget.name,
                 ),
                 UserInfoRow(
-                  user: user,
                   title: "Email",
-                  value: 'email',
+                  value: widget.email,
                 ),
                 UserInfoRow(
-                  user: user,
                   title: "Phone",
-                  value: 'phone',
+                  value: widget.phone,
                 ),
                 SizedBox(
                   height: 20,
@@ -198,12 +212,9 @@ class UserInfoRow extends StatelessWidget {
   String title, value;
   UserInfoRow({
     super.key,
-    required this.user,
     required this.title,
     required this.value,
   });
-
-  final Map<String, dynamic> user;
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +230,7 @@ class UserInfoRow extends StatelessWidget {
             ),
           ),
           Text(
-            user[value],
+            value,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,

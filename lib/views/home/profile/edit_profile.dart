@@ -14,8 +14,14 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
 class EditProfile extends StatefulWidget {
-  Map<String, dynamic> user;
-  EditProfile({super.key, required this.user});
+  String name, phone;
+  String? imageUrl;
+  EditProfile({
+    super.key,
+    required this.name,
+    required this.phone,
+    this.imageUrl = null,
+  });
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -74,9 +80,17 @@ class _EditProfileState extends State<EditProfile> {
           throw Exception("Failed to update profile: $responseBody");
         } else {
           await Provider.of<AuthProvider>(context, listen: false).checkToken();
-
+          var prov = Provider.of<AuthProvider>(context, listen: false);
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => ProfilePage()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProfilePage(
+                        imageUrl: prov.userDetails['imageURL'],
+                        name: prov.userDetails['name'],
+                        email: prov.userDetails['email'],
+                        id: prov.userDetails['id'],
+                        phone: prov.userDetails['phone'],
+                      )));
         }
         // print(responseBody);
         // print(request);
@@ -94,9 +108,8 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   void initState() {
-    nameController.text = widget.user["name"];
-    emailController.text = widget.user["email"];
-    phoneController.text = widget.user["phone"];
+    nameController.text = widget.name;
+    phoneController.text = widget.phone;
     super.initState();
   }
 
@@ -155,11 +168,11 @@ class _EditProfileState extends State<EditProfile> {
                               decoration: BoxDecoration(
                                   image: DecorationImage(
                                       fit: BoxFit.cover,
-                                      image: NetworkImage(user["imageURL"])),
+                                      image: NetworkImage(widget.imageUrl!)),
                                   shape: BoxShape.circle,
                                   color:
                                       const Color.fromARGB(255, 206, 185, 243)),
-                              child: user["imageURL"] == null
+                              child: widget.imageUrl == null
                                   ? Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -255,12 +268,7 @@ class _EditProfileState extends State<EditProfile> {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       backgroundColor: Colors.green,
                       content: Text("Profile Updated!")));
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfilePage(),
-                    ),
-                  );
+                  Navigator.pop(context);
                 },
                 child: InkWell(
                     onTap: () {

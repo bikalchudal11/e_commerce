@@ -2,6 +2,7 @@
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/provider/meme_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
+import 'package:e_commerce/views/home/profile/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -14,18 +15,20 @@ class MemeContainer extends StatefulWidget {
   String createdAt;
   String? caption;
   String filePath;
+
+  Map<String, dynamic>? otherUserInfo;
   List<dynamic>? likesIds;
-  MemeContainer({
-    super.key,
-    required this.uploadPersonId,
-    required this.uploaderImg,
-    required this.name,
-    required this.memeId,
-    required this.createdAt,
-    required this.caption,
-    required this.filePath,
-    required this.likesIds,
-  });
+  MemeContainer(
+      {super.key,
+      required this.uploadPersonId,
+      required this.uploaderImg,
+      required this.name,
+      required this.memeId,
+      required this.createdAt,
+      required this.caption,
+      required this.filePath,
+      required this.likesIds,
+      this.otherUserInfo});
 
   @override
   State<MemeContainer> createState() => _MemeContainerState();
@@ -37,6 +40,34 @@ class _MemeContainerState extends State<MemeContainer> {
   void initState() {
     captionController.text = widget.caption.toString();
     super.initState();
+  }
+
+  Future<void> goToProfile() async {
+    var prov = Provider.of<AuthProvider>(context, listen: false);
+    //check if the user on tapping
+    //if the user is self then pass the data through user details
+    //if the user is not self then pass the data through the meme
+    if (widget.uploadPersonId == prov.userDetails["id"]) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ProfilePage(
+                  imageUrl: prov.userDetails['imageURL'],
+                  email: prov.userDetails['email'],
+                  name: prov.userDetails['name'],
+                  phone: prov.userDetails['phone'],
+                  id: prov.userDetails['id'])));
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ProfilePage(
+                  imageUrl: widget.otherUserInfo!['imageURL'],
+                  email: widget.otherUserInfo!['email'],
+                  name: widget.otherUserInfo!['name'],
+                  phone: widget.otherUserInfo!['phone'],
+                  id: widget.otherUserInfo!['id'])));
+    }
   }
 
   @override
@@ -62,6 +93,9 @@ class _MemeContainerState extends State<MemeContainer> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ListTile(
+            onTap: () {
+              goToProfile();
+            },
             contentPadding: EdgeInsets.all(0),
             leading: widget.uploaderImg != null
                 ? Container(
@@ -91,132 +125,136 @@ class _MemeContainerState extends State<MemeContainer> {
               ),
             ),
             subtitle: Text(widget.createdAt),
-            trailing: PopupMenuButton(
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                              title: Text(
-                                "Do you want to delete this meme ?",
-                                style: TextStyle(fontSize: 18),
-                              ),
-                              actions: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    TextButton(
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStatePropertyAll(
-                                          primaryColor,
-                                        ),
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                          secondaryColor,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        provMeme.deleteMeme(
-                                            widget.memeId, context);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text("Yes"),
+            trailing: userId == widget.uploadPersonId
+                ? PopupMenuButton(
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                    title: Text(
+                                      "Do you want to delete this meme ?",
+                                      style: TextStyle(fontSize: 18),
                                     ),
-                                    TextButton(
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStatePropertyAll(
-                                          primaryColor,
-                                        ),
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                          secondaryColor,
-                                        ),
+                                    actions: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          TextButton(
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStatePropertyAll(
+                                                primaryColor,
+                                              ),
+                                              foregroundColor:
+                                                  MaterialStatePropertyAll(
+                                                secondaryColor,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              provMeme.deleteMeme(
+                                                  widget.memeId, context);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("Yes"),
+                                          ),
+                                          TextButton(
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStatePropertyAll(
+                                                primaryColor,
+                                              ),
+                                              foregroundColor:
+                                                  MaterialStatePropertyAll(
+                                                secondaryColor,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("No"),
+                                          )
+                                        ],
                                       ),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text("No"),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ));
-                  },
-                  value: "delete",
-                  child: Text("Delete"),
-                ),
-                PopupMenuItem(
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: ((context) => AlertDialog(
-                              title: Text(
-                                "Edit caption",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              content: TextField(
-                                controller: captionController,
-                                decoration: InputDecoration(
-                                  fillColor: textFieldBgColor,
-                                  filled: true,
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                              ),
-                              actions: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    TextButton(
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStatePropertyAll(
-                                          primaryColor,
-                                        ),
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                          secondaryColor,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        provMeme.editCaption(widget.memeId,
-                                            captionController.text, context);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text("Save"),
+                                    ],
+                                  ));
+                        },
+                        value: "delete",
+                        child: Text("Delete"),
+                      ),
+                      PopupMenuItem(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: ((context) => AlertDialog(
+                                    title: Text(
+                                      "Edit caption",
+                                      style: TextStyle(fontSize: 20),
                                     ),
-                                    TextButton(
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStatePropertyAll(
-                                          primaryColor,
-                                        ),
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                          secondaryColor,
+                                    content: TextField(
+                                      controller: captionController,
+                                      decoration: InputDecoration(
+                                        fillColor: textFieldBgColor,
+                                        filled: true,
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide.none,
                                         ),
                                       ),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text("Don't save"),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            )));
-                  },
-                  value: "edit",
-                  child: Text("Edit"),
-                ),
-              ],
-            ),
+                                    ),
+                                    actions: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          TextButton(
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStatePropertyAll(
+                                                primaryColor,
+                                              ),
+                                              foregroundColor:
+                                                  MaterialStatePropertyAll(
+                                                secondaryColor,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              provMeme.editCaption(
+                                                  widget.memeId,
+                                                  captionController.text,
+                                                  context);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("Save"),
+                                          ),
+                                          TextButton(
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStatePropertyAll(
+                                                primaryColor,
+                                              ),
+                                              foregroundColor:
+                                                  MaterialStatePropertyAll(
+                                                secondaryColor,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("Don't save"),
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  )));
+                        },
+                        value: "edit",
+                        child: Text("Edit"),
+                      ),
+                    ],
+                  )
+                : SizedBox(),
           ),
           SizedBox(
             height: 5,

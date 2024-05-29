@@ -6,12 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class LikedMemes extends StatelessWidget {
-  const LikedMemes({super.key});
+  String id;
+  LikedMemes({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<MemeProvider>(context, listen: false);
-    prov.fetchLikedMemes(context);
+    prov.fetchLikedMemes(context, id);
     return Consumer<MemeProvider>(
       builder: (context, value, child) {
         return value.isLiked

@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     Provider.of<MemeProvider>(context, listen: false);
+    var prov = Provider.of<AuthProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -52,8 +53,16 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(right: 10.0),
             child: IconButton(
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ProfilePage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfilePage(
+                              imageUrl: prov.userDetails['imageURL'],
+                              name: prov.userDetails['name'],
+                              email: prov.userDetails['email'],
+                              id: prov.userDetails['id'],
+                              phone: prov.userDetails['phone'],
+                            )));
               },
               icon: Icon(
                 Icons.person,

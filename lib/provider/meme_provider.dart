@@ -43,10 +43,10 @@ class MemeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchPostedMemes(context) async {
+  Future<void> fetchPostedMemes(context, String userId) async {
     String token = AuthProvider.authId;
-    var prov = Provider.of<AuthProvider>(context, listen: false);
-    String userId = prov.userDetails['id']!;
+    // var prov = Provider.of<AuthProvider>(context, listen: false);
+    // String userId = prov.userDetails['id']!;
 
     var response = await http.get(
       Uri.parse("$baseApi" "memes/" "by/" + userId),
@@ -72,10 +72,10 @@ class MemeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchLikedMemes(context) async {
+  Future<void> fetchLikedMemes(context, String userId) async {
     String token = AuthProvider.authId;
-    var prov = Provider.of<AuthProvider>(context, listen: false);
-    String userId = prov.userDetails['id']!;
+    // var prov = Provider.of<AuthProvider>(context, listen: false);
+    // String userId = prov.userDetails['id']!;
 
     var response = await http.get(
       Uri.parse("$baseApi" "memes/" "liked/" + userId),
