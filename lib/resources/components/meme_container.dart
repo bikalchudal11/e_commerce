@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, must_be_immutable, prefer_is_empty, unnecessary_null_comparison
+import 'package:e_commerce/models/meme.dart';
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/provider/meme_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
@@ -8,27 +9,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MemeContainer extends StatefulWidget {
-  String uploadPersonId;
-  String? uploaderImg;
-  String memeId;
-  String name;
-  String createdAt;
-  String? caption;
-  String filePath;
+  Meme meme;
 
-  Map<String, dynamic>? otherUserInfo;
-  List<dynamic>? likesIds;
-  MemeContainer(
-      {super.key,
-      required this.uploadPersonId,
-      this.uploaderImg,
-      required this.name,
-      required this.memeId,
-      required this.createdAt,
-      required this.caption,
-      required this.filePath,
-      required this.likesIds,
-      this.otherUserInfo});
+  MemeContainer({super.key, required this.meme});
 
   @override
   State<MemeContainer> createState() => _MemeContainerState();
@@ -38,7 +21,7 @@ class _MemeContainerState extends State<MemeContainer> {
   TextEditingController captionController = TextEditingController();
   @override
   void initState() {
-    captionController.text = widget.caption.toString();
+    captionController.text = widget.meme.caption.toString();
     super.initState();
   }
 
@@ -47,38 +30,23 @@ class _MemeContainerState extends State<MemeContainer> {
     //check if the user on tapping
     //if the user is self then pass the data through user details
     //if the user is not self then pass the data through the meme
-    if (widget.uploadPersonId == prov.userDetails["id"]) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ProfilePage(
-                  imageUrl: prov.userDetails['imageURL'],
-                  email: prov.userDetails['email'],
-                  name: prov.userDetails['name'],
-                  phone: prov.userDetails['phone'],
-                  id: prov.userDetails['id'])));
-    } else {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ProfilePage(
-                  imageUrl: widget.otherUserInfo!['imageURL'],
-                  email: widget.otherUserInfo!['email'],
-                  name: widget.otherUserInfo!['name'],
-                  phone: widget.otherUserInfo!['phone'],
-                  id: widget.otherUserInfo!['id'])));
-    }
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ProfilePage(
+                  user: widget.meme.uploadedBy,
+                )));
   }
 
   @override
   Widget build(BuildContext context) {
     // print(caption);
-    DateTime dateTime = DateTime.parse(widget.createdAt);
     DateFormat dateFormat = DateFormat('yyyy-MM-dd');
-    widget.createdAt = dateFormat.format(dateTime);
+    String formattedDate = dateFormat.format(widget.meme.createdAt);
     var prov = Provider.of<AuthProvider>(context, listen: false);
     var provMeme = Provider.of<MemeProvider>(context, listen: false);
-    String? userId = prov.userDetails["id"];
+    String? userId = prov.userDetails!.id;
 
     // print(provMeme.memesList);
     // print(userId);
@@ -97,13 +65,13 @@ class _MemeContainerState extends State<MemeContainer> {
               goToProfile();
             },
             contentPadding: EdgeInsets.all(0),
-            leading: widget.uploaderImg != null
+            leading: widget.meme.uploadedBy.imageURL != null
                 ? Container(
                     width: 40,
                     decoration: BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: NetworkImage(widget.uploaderImg!),
+                          image: NetworkImage(widget.meme.uploadedBy.imageURL!),
                         ),
                         shape: BoxShape.circle,
                         color: Color.fromARGB(255, 216, 204, 239)),
@@ -118,14 +86,14 @@ class _MemeContainerState extends State<MemeContainer> {
                       child: Icon(Icons.person),
                     )),
             title: Text(
-              widget.name,
+              widget.meme.uploadedBy.name,
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            subtitle: Text(widget.createdAt),
-            trailing: userId == widget.uploadPersonId
+            subtitle: Text(formattedDate),
+            trailing: userId == widget.meme.uploadedBy.id
                 ? PopupMenuButton(
                     itemBuilder: (context) => [
                       PopupMenuItem(
@@ -155,7 +123,7 @@ class _MemeContainerState extends State<MemeContainer> {
                                             ),
                                             onPressed: () {
                                               provMeme.deleteMeme(
-                                                  widget.memeId, context);
+                                                  widget.meme.id, context);
                                               Navigator.pop(context);
                                             },
                                             child: Text("Yes"),
@@ -221,7 +189,7 @@ class _MemeContainerState extends State<MemeContainer> {
                                             ),
                                             onPressed: () {
                                               provMeme.editCaption(
-                                                  widget.memeId,
+                                                  widget.meme.id,
                                                   captionController.text,
                                                   context);
                                               Navigator.pop(context);
@@ -259,7 +227,9 @@ class _MemeContainerState extends State<MemeContainer> {
           SizedBox(
             height: 5,
           ),
-          Text(widget.caption == null ? "" : widget.caption.toString()),
+          Text(widget.meme.caption == null
+              ? ""
+              : widget.meme.caption.toString()),
           SizedBox(
             height: 15,
           ),
@@ -268,7 +238,8 @@ class _MemeContainerState extends State<MemeContainer> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
-                    fit: BoxFit.fill, image: NetworkImage(widget.filePath))),
+                    fit: BoxFit.fill,
+                    image: NetworkImage(widget.meme.filePath))),
           ),
           SizedBox(
             height: 10,
@@ -278,22 +249,22 @@ class _MemeContainerState extends State<MemeContainer> {
               Consumer<MemeProvider>(builder: (context, value, child) {
                 return IconButton(
                   onPressed: () {
-                    value.toggleLike(widget.memeId);
+                    value.toggleLike(widget.meme.id);
                   },
                   icon: Icon(
-                      widget.likesIds!.contains(userId)
+                      widget.meme.likes!.contains(userId)
                           ? Icons.favorite
                           : Icons.favorite_outline,
-                      color: widget.likesIds!.contains(userId)
+                      color: widget.meme.likes!.contains(userId)
                           ? Colors.red
                           : Colors.black),
                 );
               }),
               Text(
-                ((widget.likesIds!.length) == 0
+                ((widget.meme.likes!.length) == 0
                         ? " "
-                        : "${widget.likesIds!.length} ") +
-                    ((widget.likesIds!.length == 1) ? "like" : "likes"),
+                        : "${widget.meme.likes!.length} ") +
+                    ((widget.meme.likes!.length == 1) ? "like" : "likes"),
               ),
             ],
           ),

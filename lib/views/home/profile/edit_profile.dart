@@ -85,11 +85,7 @@ class _EditProfileState extends State<EditProfile> {
               context,
               MaterialPageRoute(
                   builder: (context) => ProfilePage(
-                        imageUrl: prov.userDetails['imageURL'],
-                        name: prov.userDetails['name'],
-                        email: prov.userDetails['email'],
-                        id: prov.userDetails['id'],
-                        phone: prov.userDetails['phone'],
+                        user: prov.userDetails!,
                       )));
         }
         // print(responseBody);

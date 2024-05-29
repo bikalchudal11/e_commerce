@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable, prefer_const_constructors_in_immutables
 
+import 'package:e_commerce/models/user.dart';
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/views/home/profile/edit_profile.dart';
@@ -9,34 +10,24 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
-  String name, email, phone, id;
-  String? imageUrl;
-  ProfilePage({
-    super.key,
-    required this.email,
-    required this.name,
-    required this.phone,
-    this.imageUrl,
-    required this.id,
-  });
+  User user;
+  ProfilePage({super.key, required this.user});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  bool isPosted = true;
-
-  bool isLiked = false;
+  bool isPostedSelected = true;
 
   showView() {
-    if (isPosted == true) {
+    if (isPostedSelected == true) {
       return PostedMemes(
-        id: widget.id,
+        id: widget.user.id,
       );
     } else {
       return LikedMemes(
-        id: widget.id,
+        id: widget.user.id,
       );
     }
   }
@@ -44,6 +35,8 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<AuthProvider>(context, listen: false);
+    // print(widget.user.imageURL);
+    // print(prov.userDetails!.imageURL);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
@@ -57,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         centerTitle: true,
         actions: [
-          widget.id == prov.userDetails['id']
+          widget.user.id == prov.userDetails!.id
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: TextButton(
@@ -69,9 +62,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => EditProfile(
-                            name: widget.name,
-                            phone: widget.phone,
-                            imageUrl: widget.imageUrl,
+                            name: widget.user.name,
+                            phone: widget.user.phone,
+                            imageUrl: widget.user.imageURL,
                           ),
                         ),
                       );
@@ -88,14 +81,14 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Center(
             child: Column(
               children: [
-                widget.imageUrl != null
+                widget.user.imageURL != null
                     ? Container(
                         height: 120,
                         width: 120,
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(widget.imageUrl!)),
+                                image: NetworkImage(widget.user.imageURL!)),
                             shape: BoxShape.circle,
                             color: Color.fromARGB(255, 216, 204, 239)),
                       )
@@ -107,22 +100,25 @@ class _ProfilePageState extends State<ProfilePage> {
                             color: const Color.fromARGB(255, 206, 185, 243)),
                         // backgroundImage: FileImage(File(profilePic!.path)),
                         child: Center(
-                          child: Icon(Icons.person),
+                          child: Icon(
+                            Icons.person,
+                            size: 50,
+                          ),
                         )),
                 SizedBox(
                   height: 30,
                 ),
                 UserInfoRow(
                   title: "Name",
-                  value: widget.name,
+                  value: widget.user.name,
                 ),
                 UserInfoRow(
                   title: "Email",
-                  value: widget.email,
+                  value: widget.user.email,
                 ),
                 UserInfoRow(
                   title: "Phone",
-                  value: widget.phone,
+                  value: widget.user.phone,
                 ),
                 SizedBox(
                   height: 20,
@@ -133,18 +129,21 @@ class _ProfilePageState extends State<ProfilePage> {
                     InkWell(
                       onTap: () {
                         setState(() {
-                          isLiked = false;
-                          isPosted = true;
+                          if (!isPostedSelected) {
+                            isPostedSelected = true;
+                          }
                         });
                       },
                       child: Container(
                         height: 40,
                         width: 170,
                         decoration: BoxDecoration(
-                          color: isPosted ? primaryColor : secondaryColor,
+                          color:
+                              isPostedSelected ? primaryColor : secondaryColor,
                           border: Border.all(
-                            color:
-                                !isPosted ? primaryColor : Colors.transparent,
+                            color: !isPostedSelected
+                                ? primaryColor
+                                : Colors.transparent,
                           ),
                           borderRadius: BorderRadius.circular(
                             10,
@@ -154,7 +153,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: Text(
                             "Posted",
                             style: TextStyle(
-                              color: !isPosted ? primaryColor : secondaryColor,
+                              color: !isPostedSelected
+                                  ? primaryColor
+                                  : secondaryColor,
                               fontWeight: FontWeight.w600,
                               fontSize: 15,
                             ),
@@ -165,18 +166,22 @@ class _ProfilePageState extends State<ProfilePage> {
                     InkWell(
                       onTap: () {
                         setState(() {
-                          isLiked = true;
-                          isPosted = false;
+                          if (isPostedSelected) {
+                            isPostedSelected = false;
+                          }
                         });
                       },
                       child: Container(
                         height: 40,
                         width: 170,
                         decoration: BoxDecoration(
-                            color: isLiked ? primaryColor : secondaryColor,
+                            color: !isPostedSelected
+                                ? primaryColor
+                                : secondaryColor,
                             border: Border.all(
-                              color:
-                                  !isLiked ? primaryColor : Colors.transparent,
+                              color: isPostedSelected
+                                  ? primaryColor
+                                  : Colors.transparent,
                             ),
                             borderRadius: BorderRadius.circular(
                               10,
@@ -185,7 +190,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: Text(
                             "Liked",
                             style: TextStyle(
-                              color: !isLiked ? primaryColor : secondaryColor,
+                              color: isPostedSelected
+                                  ? primaryColor
+                                  : secondaryColor,
                               fontWeight: FontWeight.w600,
                               fontSize: 15,
                             ),

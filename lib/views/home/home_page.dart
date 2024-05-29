@@ -56,11 +56,7 @@ class _HomePageState extends State<HomePage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => ProfilePage(
-                              imageUrl: prov.userDetails['imageURL'],
-                              name: prov.userDetails['name'],
-                              email: prov.userDetails['email'],
-                              id: prov.userDetails['id'],
-                              phone: prov.userDetails['phone'],
+                              user: prov.userDetails!,
                             )));
               },
               icon: Icon(

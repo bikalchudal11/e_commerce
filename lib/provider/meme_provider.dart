@@ -2,15 +2,16 @@
 
 import 'dart:convert';
 
+import 'package:e_commerce/models/meme.dart';
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class MemeProvider with ChangeNotifier {
-  List<Map<String, dynamic>> memesList = [];
-  List<Map<String, dynamic>> postedMemesList = [];
-  List<Map<String, dynamic>> likedMemesList = [];
+  List<Meme> memesList = [];
+  List<Meme> postedMemesList = [];
+  List<Meme> likedMemesList = [];
   bool isFetchingDone = false;
   bool isPosted = false;
   bool isLiked = false;
@@ -31,7 +32,7 @@ class MemeProvider with ChangeNotifier {
     var decodedResponse = jsonDecode(response.body);
     if (response.statusCode == 200) {
       memesList = (decodedResponse as List<dynamic>)
-          .map((e) => e as Map<String, dynamic>)
+          .map((e) => Meme.parseFromJson(e as Map<String, dynamic>))
           .toList();
       isFetchingDone = true;
       notifyListeners();
@@ -58,7 +59,7 @@ class MemeProvider with ChangeNotifier {
     var decodedResponse = jsonDecode(response.body);
     if (response.statusCode == 200) {
       postedMemesList = (decodedResponse as List<dynamic>)
-          .map((e) => e as Map<String, dynamic>)
+          .map((e) => Meme.parseFromJson(e as Map<String, dynamic>))
           .toList();
       // print(postedMemesList);
       // print(decodedResponse);
@@ -87,7 +88,7 @@ class MemeProvider with ChangeNotifier {
     var decodedResponse = jsonDecode(response.body);
     if (response.statusCode == 200) {
       likedMemesList = (decodedResponse as List<dynamic>)
-          .map((e) => e as Map<String, dynamic>)
+          .map((e) => Meme.parseFromJson(e as Map<String, dynamic>))
           .toList();
       // print(likedMemesList);
       // print(decodedResponse);
@@ -109,8 +110,8 @@ class MemeProvider with ChangeNotifier {
     var decodedResponse = jsonDecode(response.body);
     if (response.statusCode == 200) {
       for (int i = 0; i < memesList.length; i++) {
-        if (memesList[i]["_id"] == memeId) {
-          memesList[i]['likes'] = decodedResponse['likes'];
+        if (memesList[i].id == memeId) {
+          memesList[i].likes = decodedResponse['likes'];
         }
       }
       notifyListeners();
@@ -132,8 +133,8 @@ class MemeProvider with ChangeNotifier {
     var decodedResponse = jsonDecode(response.body);
     if (response.statusCode == 200) {
       for (int i = 0; i < memesList.length; i++) {
-        if (memesList[i]["_id"] == memeId) {
-          memesList[i] = decodedResponse["meme"];
+        if (memesList[i].id == memeId) {
+          memesList[i] = Meme.parseFromJson(decodedResponse["meme"]);
           notifyListeners();
         }
       }
@@ -153,7 +154,7 @@ class MemeProvider with ChangeNotifier {
     var decodedResponse = jsonDecode(response.body);
     if (response.statusCode == 200) {
       for (int i = 0; i < memesList.length; i++) {
-        if (memesList[i]["_id"] == memeId) {
+        if (memesList[i].id == memeId) {
           memesList.removeAt(i);
 
           notifyListeners();

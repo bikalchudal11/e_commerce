@@ -13,5 +13,12 @@ class User {
     this.imageURL,
   });
 
-  // static User
+  static User parseFromJson(Map<String, dynamic> rawUser) {
+    return User(
+        name: rawUser['name'],
+        email: rawUser['email'],
+        phone: rawUser['phone'],
+        id: rawUser['id'],
+        imageURL: rawUser['imageURL']);
+  }
 }

@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:e_commerce/models/user.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Map<String, dynamic> userDetails = {};
+  User? userDetails;
 
   AuthProvider() {
     checkToken();
@@ -38,7 +39,7 @@ class AuthProvider with ChangeNotifier {
         },
       );
       var decodedResponse = jsonDecode(response.body);
-      userDetails = decodedResponse;
+      userDetails = User.parseFromJson(decodedResponse);
       // print(authId);
 
       notifyListeners();

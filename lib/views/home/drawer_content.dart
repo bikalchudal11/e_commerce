@@ -76,20 +76,20 @@ class _DrawerContentState extends State<DrawerContent> {
               children: [
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: NetworkImage(prov.userDetails['imageURL']),
+                  backgroundImage: NetworkImage(prov.userDetails!.imageURL!),
                 ),
                 SizedBox(
                   height: 10,
                 ),
                 Text(
-                  prov.userDetails['name'],
+                  prov.userDetails!.name,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 Text(
-                  prov.userDetails['email'],
+                  prov.userDetails!.email,
                   style: TextStyle(fontSize: 15),
                 ),
                 Divider(),
