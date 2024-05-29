@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, use_build_context_synchronously
 
 import 'dart:convert';
 
@@ -7,9 +7,7 @@ import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/resources/custom_button.dart';
 import 'package:e_commerce/views/home/home_page.dart';
 import 'package:e_commerce/views/login/create_account.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,7 +35,7 @@ class _LogInScreenState extends State<LogInScreen> {
   Future<void> login() async {
     final isValid = _formKey.currentState?.validate();
     if (isValid == true) {
-      var response = await http.post(Uri.parse("$baseApi" + "auth/login"),
+      var response = await http.post(Uri.parse("${baseApi}auth/login"),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'email': emailController.text,

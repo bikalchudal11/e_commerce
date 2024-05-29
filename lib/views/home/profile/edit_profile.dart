@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, use_build_context_synchronously, must_be_immutable
+// ignore_for_file: prefer_const_literals_to_create_immutables, use_build_context_synchronously, must_be_immutable, prefer_conditional_assignment
 
 import 'dart:io';
 
@@ -20,7 +20,7 @@ class EditProfile extends StatefulWidget {
     super.key,
     required this.name,
     required this.phone,
-    this.imageUrl = null,
+    this.imageUrl,
   });
 
   @override
@@ -115,8 +115,6 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    var prov = Provider.of<AuthProvider>(context, listen: false);
-    var user = prov.userDetails;
     // print(user);
 
     // print(widget.user);
@@ -260,23 +258,11 @@ class _EditProfileState extends State<EditProfile> {
             ),
             InkWell(
                 onTap: () {
-                  var prov = Provider.of<AuthProvider>(context, listen: false);
-
-                  prov.userDetails['name'] = nameController.text;
-                  prov.userDetails['phone'] = phoneController.text;
-
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      backgroundColor: Colors.green,
-                      content: Text("Profile Updated!")));
-                  Navigator.pop(context);
+                  saveProfile();
                 },
-                child: InkWell(
-                    onTap: () {
-                      saveProfile();
-                    },
-                    child: isProfileSaved
-                        ? CircularProgressIndicator()
-                        : CustomButton(buttonName: "Save Profile")))
+                child: isProfileSaved
+                    ? CircularProgressIndicator()
+                    : CustomButton(buttonName: "Save Profile"))
           ],
         ),
       ),

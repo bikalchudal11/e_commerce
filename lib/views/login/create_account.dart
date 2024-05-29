@@ -6,7 +6,6 @@ import 'package:e_commerce/views/login/login.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/resources/custom_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 class CreateAccountPage extends StatefulWidget {
@@ -29,7 +28,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   Future<void> verify() async {
     final isValid = _formKey.currentState?.validate();
     if (isValid == true) {
-      var response = await http.post(Uri.parse("$baseApi" + "auth/register"),
+      var response = await http.post(Uri.parse("${baseApi}auth/register"),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'email': emailController.text,

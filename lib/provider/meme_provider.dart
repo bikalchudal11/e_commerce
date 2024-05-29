@@ -6,7 +6,6 @@ import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
 class MemeProvider with ChangeNotifier {
   List<Map<String, dynamic>> memesList = [];
@@ -135,9 +134,6 @@ class MemeProvider with ChangeNotifier {
       for (int i = 0; i < memesList.length; i++) {
         if (memesList[i]["_id"] == memeId) {
           memesList[i] = decodedResponse["meme"];
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Colors.green,
-              content: Text("Caption updated!")));
           notifyListeners();
         }
       }
@@ -159,13 +155,12 @@ class MemeProvider with ChangeNotifier {
       for (int i = 0; i < memesList.length; i++) {
         if (memesList[i]["_id"] == memeId) {
           memesList.removeAt(i);
+
           notifyListeners();
         }
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.red,
-          content: Text(decodedResponse['message'])));
+      throw (decodedResponse['message']);
     }
     notifyListeners();
   }

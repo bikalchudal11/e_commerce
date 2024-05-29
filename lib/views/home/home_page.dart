@@ -2,7 +2,6 @@
 
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/provider/meme_provider.dart';
-import 'package:e_commerce/resources/components/meme_container.dart';
 import 'package:e_commerce/resources/components/memes.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/views/home/add_meme.dart';

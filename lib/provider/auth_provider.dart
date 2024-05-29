@@ -50,7 +50,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> updateProfile(
       String name, String phone, String imgPath, context) async {
-    var response = await http.put(Uri.parse("$baseApi" + "users/me"),
+    var response = await http.put(Uri.parse("$baseApi" "users/me"),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $authId'

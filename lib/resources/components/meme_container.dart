@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 
 class MemeContainer extends StatefulWidget {
   String uploadPersonId;
-  String uploaderImg;
+  String? uploaderImg;
   String memeId;
   String name;
   String createdAt;
@@ -21,7 +21,7 @@ class MemeContainer extends StatefulWidget {
   MemeContainer(
       {super.key,
       required this.uploadPersonId,
-      required this.uploaderImg,
+      this.uploaderImg,
       required this.name,
       required this.memeId,
       required this.createdAt,
@@ -103,7 +103,7 @@ class _MemeContainerState extends State<MemeContainer> {
                     decoration: BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: NetworkImage(widget.uploaderImg),
+                          image: NetworkImage(widget.uploaderImg!),
                         ),
                         shape: BoxShape.circle,
                         color: Color.fromARGB(255, 216, 204, 239)),

@@ -4,7 +4,6 @@ import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/resources/components/drawer_tile.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/views/login/login.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,7 +17,6 @@ class DrawerContent extends StatefulWidget {
 
 class _DrawerContentState extends State<DrawerContent> {
   Future<void> logOut() async {
-    var prov = Provider.of<AuthProvider>(context, listen: false);
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
