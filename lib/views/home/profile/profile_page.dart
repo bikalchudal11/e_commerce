@@ -53,11 +53,8 @@ class _ProfilePageState extends State<ProfilePage> {
           widget.user.id == prov.userDetails!.id
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: TextButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(secondaryColor),
-                    ),
-                    onPressed: () {
+                  child: InkWell(
+                    onTap: () {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
@@ -69,7 +66,20 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       );
                     },
-                    child: Text("Edit"),
+                    child: Container(
+                      height: 40,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          "Edit",
+                          style: TextStyle(fontSize: 14, color: Colors.white),
+                        ),
+                      ),
+                    ),
                   ),
                 )
               : SizedBox()
@@ -136,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       child: Container(
                         height: 40,
-                        width: 170,
+                        width: 150,
                         decoration: BoxDecoration(
                           color:
                               isPostedSelected ? primaryColor : secondaryColor,
@@ -173,7 +183,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       child: Container(
                         height: 40,
-                        width: 170,
+                        width: 150,
                         decoration: BoxDecoration(
                             color: !isPostedSelected
                                 ? primaryColor

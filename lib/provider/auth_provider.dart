@@ -12,8 +12,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthProvider with ChangeNotifier {
   static String authId = '';
 
-  setAuthId(String id) {
-    authId = id;
+  setAuthId(String? id) {
+    if (id == null) {
+      id = "";
+      authId = id;
+    } else {
+      authId = id;
+    }
     notifyListeners();
   }
 
@@ -26,9 +31,13 @@ class AuthProvider with ChangeNotifier {
   Future<void> checkToken() async {
     var prefs = await SharedPreferences.getInstance();
 
-    String tokenId = prefs.getString("tokens")!;
+    String? tokenId = prefs.getString("tokens");
 
-    authId = tokenId;
+    if (tokenId == null) {
+      authId = "";
+    } else {
+      authId = tokenId;
+    }
 
     if (authId.isNotEmpty) {
       var response = await http.get(

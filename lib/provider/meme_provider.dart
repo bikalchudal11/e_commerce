@@ -111,7 +111,9 @@ class MemeProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       for (int i = 0; i < memesList.length; i++) {
         if (memesList[i].id == memeId) {
-          memesList[i].likes = decodedResponse['likes'];
+          memesList[i].likes = (decodedResponse['likes'] as List<dynamic>)
+              .map((e) => e as String)
+              .toList();
         }
       }
       notifyListeners();

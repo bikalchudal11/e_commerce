@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
   _next() async {
     var prov = Provider.of<AuthProvider>(context, listen: false);
     var prefs = await SharedPreferences.getInstance();
-    prov.setAuthId(prefs.getString("tokens")!);
+    prov.setAuthId(prefs.getString("tokens"));
     if (AuthProvider.authId.isNotEmpty) {
       Future.delayed(Duration(milliseconds: 2200), () {
         Navigator.pushReplacement(

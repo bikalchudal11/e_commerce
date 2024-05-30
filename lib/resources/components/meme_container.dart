@@ -52,7 +52,7 @@ class _MemeContainerState extends State<MemeContainer> {
     // print(userId);
     // print(widget.uploadPersonId);
     return Container(
-      height: MediaQuery.of(context).size.height * 0.60,
+      height: MediaQuery.of(context).size.height * 0.65,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),

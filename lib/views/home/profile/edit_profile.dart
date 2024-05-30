@@ -6,6 +6,7 @@ import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/resources/custom_button.dart';
 import 'package:e_commerce/views/home/profile/profile_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -127,139 +128,145 @@ class _EditProfileState extends State<EditProfile> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: InkWell(
-                      onTap: () async {
-                        profilePic =
-                            await picker.pickImage(source: ImageSource.gallery);
-                        setState(() {});
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: InkWell(
+                        onTap: () async {
+                          profilePic = await picker.pickImage(
+                              source: ImageSource.gallery);
+                          setState(() {});
+                        },
+                        child: profilePic != null
+                            ? Container(
+                                height: 120,
+                                width: 120,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image:
+                                            FileImage(File(profilePic!.path))),
+                                    shape: BoxShape.circle,
+                                    color: Color.fromARGB(255, 216, 204, 239)),
+                              )
+                            : Container(
+                                height: 120,
+                                width: 120,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: NetworkImage(widget.imageUrl!)),
+                                    shape: BoxShape.circle,
+                                    color: const Color.fromARGB(
+                                        255, 206, 185, 243)),
+                                child: widget.imageUrl == null
+                                    ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.person,
+                                            size: 55,
+                                          ),
+                                          Icon(
+                                            Icons.add,
+                                            size: 25,
+                                          ),
+                                        ],
+                                      )
+                                    : SizedBox(),
+                              ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Center(
+                      child: Text(
+                        "Click above to upload or change profile!",
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: primaryColor,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text("Name:"),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    TextFormField(
+                      controller: nameController,
+                      validator: (value) {
+                        if (value == "" || value!.length < 8) {
+                          return "Username must be greater or equal to 8 characters!";
+                        } else {
+                          return null;
+                        }
                       },
-                      child: profilePic != null
-                          ? Container(
-                              height: 120,
-                              width: 120,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: FileImage(File(profilePic!.path))),
-                                  shape: BoxShape.circle,
-                                  color: Color.fromARGB(255, 216, 204, 239)),
-                            )
-                          : Container(
-                              height: 120,
-                              width: 120,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(widget.imageUrl!)),
-                                  shape: BoxShape.circle,
-                                  color:
-                                      const Color.fromARGB(255, 206, 185, 243)),
-                              child: widget.imageUrl == null
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.person,
-                                          size: 55,
-                                        ),
-                                        Icon(
-                                          Icons.add,
-                                          size: 25,
-                                        ),
-                                      ],
-                                    )
-                                  : SizedBox(),
-                            ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Center(
-                    child: Text(
-                      "Click above to upload or change profile!",
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: primaryColor,
+                      decoration: InputDecoration(
+                        fillColor: textFieldBgColor,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Text("Name:"),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  TextFormField(
-                    controller: nameController,
-                    validator: (value) {
-                      if (value == "" || value!.length < 8) {
-                        return "Username must be greater or equal to 8 characters!";
-                      } else {
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text("Phone:"),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    TextFormField(
+                      controller: phoneController,
+                      validator: (value) {
+                        if (value == "") {
+                          return 'Please enter your phone number';
+                        }
+                        // Regular expression for phone number validation
+                        final phoneRegex = RegExp(r'^\d{10}$');
+                        if (!phoneRegex.hasMatch(value!)) {
+                          return 'Please enter a valid 10-digit phone number';
+                        }
                         return null;
-                      }
-                    },
-                    decoration: InputDecoration(
-                      fillColor: textFieldBgColor,
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
+                      },
+                      decoration: InputDecoration(
+                        fillColor: textFieldBgColor,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Text("Phone:"),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  TextFormField(
-                    controller: phoneController,
-                    validator: (value) {
-                      if (value == "") {
-                        return 'Please enter your phone number';
-                      }
-                      // Regular expression for phone number validation
-                      final phoneRegex = RegExp(r'^\d{10}$');
-                      if (!phoneRegex.hasMatch(value!)) {
-                        return 'Please enter a valid 10-digit phone number';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      fillColor: textFieldBgColor,
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            InkWell(
-                onTap: () {
-                  saveProfile();
-                },
-                child: isProfileSaved
-                    ? CircularProgressIndicator()
-                    : CustomButton(buttonName: "Save Profile"))
-          ],
+              SizedBox(
+                height: 50,
+              ),
+              InkWell(
+                  onTap: () {
+                    saveProfile();
+                  },
+                  child: isProfileSaved
+                      ? CircularProgressIndicator()
+                      : CustomButton(buttonName: "Save Profile"))
+            ],
+          ),
         ),
       ),
     );

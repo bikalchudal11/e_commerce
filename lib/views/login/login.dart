@@ -7,6 +7,7 @@ import 'package:e_commerce/resources/constant.dart';
 import 'package:e_commerce/resources/custom_button.dart';
 import 'package:e_commerce/views/home/home_page.dart';
 import 'package:e_commerce/views/login/create_account.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -253,12 +254,15 @@ class _LogInScreenState extends State<LogInScreen> {
                                 color: primaryColor,
                               )),
                     SizedBox(
-                      height: 20,
+                      height: 60,
                     ),
-                    Row(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("Don't have an account? "),
+                        SizedBox(
+                          height: 10,
+                        ),
                         InkWell(
                           onTap: () {
                             Navigator.push(
