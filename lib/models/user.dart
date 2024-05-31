@@ -1,4 +1,6 @@
 class User {
+  static String defaultImageUrl =
+      'https://static.vecteezy.com/system/resources/thumbnails/002/387/693/small_2x/user-profile-icon-free-vector.jpg';
   String name;
   String email;
   String phone;

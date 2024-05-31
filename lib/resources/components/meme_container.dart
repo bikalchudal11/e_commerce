@@ -1,5 +1,8 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, must_be_immutable, prefer_is_empty, unnecessary_null_comparison
+// ignore_for_file: prefer_const_literals_to_create_immutables, must_be_immutable, prefer_is_empty, unnecessary_null_comparison, use_build_context_synchronously, unnecessary_string_interpolations, prefer_adjacent_string_concatenation, prefer_interpolation_to_compose_strings
+import 'dart:convert';
+
 import 'package:e_commerce/models/meme.dart';
+import 'package:e_commerce/models/user.dart';
 import 'package:e_commerce/provider/auth_provider.dart';
 import 'package:e_commerce/provider/meme_provider.dart';
 import 'package:e_commerce/resources/constant.dart';
@@ -7,6 +10,7 @@ import 'package:e_commerce/views/home/profile/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class MemeContainer extends StatefulWidget {
   Meme meme;
@@ -39,6 +43,77 @@ class _MemeContainerState extends State<MemeContainer> {
                 )));
   }
 
+  Future<void> showLikersInfo() async {
+    String token = AuthProvider.authId;
+    List<User>? likersList;
+    // print(token);
+    var response = await http.get(
+      Uri.parse("$baseApi" + "memes/" + "${widget.meme.id}" + "/likers"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+
+    var decodedResponse = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      for (int i = 0; i < decodedResponse.length; i++) {
+        // print(decodedResponse[i]);
+        likersList = (decodedResponse as List<dynamic>)
+            .map((e) => User.parseFromJson(e))
+            .toList();
+      }
+      // print(likersList!.first.name);
+    } else {
+      throw Exception(decodedResponse['message']);
+    }
+
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SingleChildScrollView(
+          child: Container(
+        width: double.infinity,
+        // width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(color: textFieldBgColor),
+        child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: likersList!.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 5.0),
+                child: ListTile(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ProfilePage(user: likersList![index])));
+                  },
+                  leading: Container(
+                    height: 35,
+                    width: 35,
+                    decoration: BoxDecoration(
+                        color: textFieldBgColor,
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: likersList![index].imageURL == null
+                                ? NetworkImage(User.defaultImageUrl)
+                                : NetworkImage(likersList[index].imageURL!))),
+                  ),
+                  title: Text(likersList[index].name),
+                  trailing: Icon(
+                    Icons.favorite,
+                    size: 20,
+                    color: Colors.red,
+                  ),
+                ),
+              );
+            }),
+      )),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // print(caption);
@@ -46,7 +121,7 @@ class _MemeContainerState extends State<MemeContainer> {
     String formattedDate = dateFormat.format(widget.meme.createdAt);
     var prov = Provider.of<AuthProvider>(context, listen: false);
     var provMeme = Provider.of<MemeProvider>(context, listen: false);
-    String? userId = prov.userDetails!.id;
+    String userId = prov.userDetails!.id;
 
     // print(provMeme.memesList);
     // print(userId);
@@ -260,11 +335,16 @@ class _MemeContainerState extends State<MemeContainer> {
                           : Colors.black),
                 );
               }),
-              Text(
-                ((widget.meme.likes!.length) == 0
-                        ? " "
-                        : "${widget.meme.likes!.length} ") +
-                    ((widget.meme.likes!.length == 1) ? "like" : "likes"),
+              InkWell(
+                onTap: () {
+                  showLikersInfo();
+                },
+                child: Text(
+                  ((widget.meme.likes!.length) == 0
+                          ? " "
+                          : "${widget.meme.likes!.length} ") +
+                      ((widget.meme.likes!.length == 1) ? "like" : "likes"),
+                ),
               ),
             ],
           ),
